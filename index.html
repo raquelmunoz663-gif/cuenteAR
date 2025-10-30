@@ -3,11 +3,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+
     <style>
       body {
         margin: 0;
         overflow: hidden;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-family: 'Quicksand', sans-serif;
       }
 
       #scanning-overlay {
@@ -61,9 +64,9 @@
         sceneEl.addEventListener("loaded", () => {
           const targets = sceneEl.querySelectorAll("[mindar-image-target]");
 
-          targets.forEach((target, index) => {
+          targets.forEach((target) => {
             target.addEventListener("targetFound", () => {
-              const textEntity = target.querySelector("a-text");
+              const textEntity = target.querySelector("a-entity");
               if (textEntity) {
                 textEntity.setAttribute("visible", true);
                 textEntity.emit("show");
@@ -71,7 +74,7 @@
             });
 
             target.addEventListener("targetLost", () => {
-              const textEntity = target.querySelector("a-text");
+              const textEntity = target.querySelector("a-entity");
               if (textEntity) textEntity.setAttribute("visible", false);
             });
           });
@@ -101,37 +104,61 @@
       </a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-text
-          value="1. Había una vez un ratoncito llamado Milo, que vivía en una madriguera cálida bajo un roble viejo. Le encantaba salir por las noches a buscar semillas… pero había algo que lo asustaba:
+        <a-entity visible="false" opacity="0" position="-0.45 -0.3 0"
+          animation__fade="property: opacity; to: 1; dur: 1000; easing: easeOutCubic; startEvents: show"
+          animation__scale="property: scale; from: 0.5 0.5 0.5; to: 1 1 1; dur: 1000; easing: easeOutElastic; startEvents: show"
+          animation__float="property: position; to: -0.45 -0.25 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+          
+          <a-text
+            value="Había una vez un ratoncito llamado Milo, que vivía en una madriguera cálida bajo un roble viejo. Le encantaba salir por las noches a buscar semillas… pero había algo que lo asustaba:
 
 La Luna."
-          color="#FFD700"
-          position="0 0 0"
-          align="center"
-          width="2"
-          visible="false"
-          opacity="0"
-          animation__fadein="property: opacity; to: 1; dur: 500; startEvents: show"
-        ></a-text>
+            color="#FFD700"
+            align="left"
+            width="1.5"
+            shader="msdf"
+            font="https://cdn.aframe.io/fonts/mozillavr.fnt"
+            position="0 0 0.05"
+          ></a-text>
+
+          <a-entity
+            geometry="primitive: ring; radiusInner: 0.1; radiusOuter: 0.13;"
+            material="color: #FFD700; opacity: 0.5; side: double"
+            position="-0.1 0 0"
+            rotation="90 0 0"
+            animation="property: rotation; to: 90 360 0; loop: true; dur: 4000; easing: linear">
+          </a-entity>
+        </a-entity>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 1">
-        <a-text
-          value="2. Grande, blanca y redonda, lo miraba desde lo alto con un brillo tan intenso que Milo sentía que lo estaba juzgando.
+        <a-entity visible="false" opacity="0" position="0.35 -0.3 0"
+          animation__fade="property: opacity; to: 1; dur: 1000; easing: easeOutCubic; startEvents: show"
+          animation__scale="property: scale; from: 0.5 0.5 0.5; to: 1 1 1; dur: 1000; easing: easeOutElastic; startEvents: show"
+          animation__float="property: position; to: 0.35 -0.25 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+          
+          <a-text
+            value="Grande, blanca y redonda, lo miraba desde lo alto con un brillo tan intenso que Milo sentía que lo estaba juzgando.
 
 —Seguro se ríe de mí porque soy pequeño… —pensaba mientras corría a esconderse entre las hojas."
-          color="#00FFFF"
-          position="0 0 0"
-          align="center"
-          width="2"
-          visible="false"
-          opacity="0"
-          animation__fadein="property: opacity; to: 1; dur: 500; startEvents: show"
-        ></a-text>
+            color="#00FFFF"
+            align="right"
+            width="1.5"
+            shader="msdf"
+            font="https://cdn.aframe.io/fonts/mozillavr.fnt"
+            position="0 0 0.05"
+          ></a-text>
+
+          <a-entity
+            geometry="primitive: ring; radiusInner: 0.1; radiusOuter: 0.13;"
+            material="color: #00FFFF; opacity: 0.5; side: double"
+            position="0.1 0 0"
+            rotation="90 0 0"
+            animation="property: rotation; to: 90 360 0; loop: true; dur: 4000; easing: linear">
+          </a-entity>
+        </a-entity>
       </a-entity>
     </a-scene>
   </body>
 </html>
-
-
 
