@@ -1,0 +1,206 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      #scanning-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2em;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+
+      #scanning-overlay.hidden {
+        display: none;
+      }
+
+      #scanning-overlay .dot-loader {
+        display: flex;
+        gap: 0.4em;
+        margin-top: 1em;
+      }
+
+      .dot-loader span {
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        animation: blink 1.4s infinite ease-in-out both;
+      }
+
+      .dot-loader span:nth-child(1) { animation-delay: 0s; }
+      .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
+      .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
+
+      @keyframes blink {
+        0%, 80%, 100% { opacity: 0.3; }
+        40% { opacity: 1; }
+      }
+
+      #change-model-button, #change-tree-button {
+        position: absolute;
+        top: 10px;
+        z-index: 10000;
+        padding: 10px 20px;
+        background-color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      #change-model-button { left: 10px; }
+      #change-tree-button { left: 170px; }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sceneEl = document.querySelector("a-scene");
+
+        sceneEl.addEventListener("loaded", function () {
+          let showingFlower = false;
+          const flowerModel = document.querySelector("#flowerModel");
+          const butterflyModel = document.querySelector("#butterflyModel");
+          const changeModelButton = document.querySelector("#change-model-button");
+          changeModelButton.textContent = "Mostrar flor 🌸";
+
+          changeModelButton.addEventListener("click", () => {
+            butterflyModel.setAttribute("visible", !showingFlower);
+            flowerModel.setAttribute("visible", showingFlower);
+            changeModelButton.textContent = showingFlower ? "Mostrar flor 🌸" : "Mostrar mariposa 🦋";
+            showingFlower = !showingFlower;
+          });
+
+          let showingCampfire = false;
+          const treeModel = document.querySelector("#treeModel");
+          const campfireModel = document.querySelector("#campfireModel");
+          const changeTreeButton = document.querySelector("#change-tree-button");
+          changeTreeButton.textContent = "Mostrar fogata 🔥";
+
+          changeTreeButton.addEventListener("click", () => {
+            treeModel.setAttribute("visible", !showingCampfire);
+            campfireModel.setAttribute("visible", showingCampfire);
+            changeTreeButton.textContent = showingCampfire ? "Mostrar fogata 🔥" : "Mostrar árbol 🌳";
+            showingCampfire = !showingCampfire;
+          });
+
+          const feedback0 = document.querySelector("#feedback0");
+          const feedback1 = document.querySelector("#feedback1");
+          const targetEntities = sceneEl.querySelectorAll("[mindar-image-target]");
+
+          targetEntities.forEach((targetEntity, index) => {
+            targetEntity.addEventListener("targetFound", () => {
+              const feedback = index === 0 ? feedback0 : feedback1;
+              if (feedback) {
+                feedback.setAttribute("visible", true);
+                feedback.emit("show");
+              }
+
+              const models = targetEntity.querySelectorAll("a-gltf-model");
+              models.forEach(model => model.emit("show"));
+            });
+          });
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="scanning-overlay" class="hidden">
+      Escaneando marcador...
+      <div class="dot-loader">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <button id="change-model-button">Cargando...</button>
+    <button id="change-tree-button">Cargando...</button>
+
+    <a-scene 
+      mindar-image="uiScanning: #scanning-overlay; imageTargetSrc: ./target.mind; maxTrack: 2"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+      embedded
+    >
+      <a-assets>
+        <a-asset-item id="flowerAsset" src="./flower.glb"></a-asset-item>
+        <a-asset-item id="butterflyAsset" src="./Butterfly1.glb"></a-asset-item>
+        <a-asset-item id="treeAsset" src="./Tree.glb"></a-asset-item>
+        <a-asset-item id="campfireAsset" src="./Campfire.glb"></a-asset-item>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"
+        cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable">
+      </a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-gltf-model id="butterflyModel" src="#butterflyAsset" rotation="0 0 0" position="0 0.25 -0.3"
+          scale="1 1 1" visible="true"
+          animation__pop="property: scale; to: 1.2 1.2 1.2; dur: 200; dir: alternate; startEvents: show"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-gltf-model>
+
+        <a-gltf-model id="flowerModel" src="#flowerAsset" rotation="0 0 0" position="0 0.25 -0.3"
+          scale="0.2 0.2 0.2" visible="false"
+          animation__pop="property: scale; to: 0.25 0.25 0.25; dur: 200; dir: alternate; startEvents: show"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-gltf-model>
+
+        <a-entity id="feedback0" visible="false">
+          <a-text value="¡Modelo detectado!" color="#FFD700" position="0 0.6 0" align="center" opacity="0"
+            scale="1 1 1"
+            animation__fadein="property: opacity; to: 1; dur: 500; easing: easeOutCubic; startEvents: show"
+            animation__fadeout="property: opacity; to: 0; dur: 500; delay: 1500; easing: easeInCubic; startEvents: show">
+          </a-text>
+          <a-entity particle-system="preset: dust; color: #FFD700, #FFFFFF; particleCount: 100"
+            position="0 0.3 0"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <a-entity mindar-image-target="targetIndex: 1">
+        <a-gltf-model id="treeModel" src="#treeAsset" rotation="0 0 0" position="0 0.25 -0.3"
+          scale="0.003 0.003 0.003" visible="true"
+          animation__pop="property: scale; to: 0.0035 0.0035 0.0035; dur: 200; dir: alternate; startEvents: show"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-gltf-model>
+
+        <a-gltf-model id="campfireModel" src="#campfireAsset" rotation="0 0 0" position="0 0.25 -0.3"
+          scale="0.5 0.5 0.5" visible="false"
+          animation__pop="property: scale; to: 0.0035 0.0035 0.0035; dur: 200; dir: alternate; startEvents: show"
+          animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        </a-gltf-model>
+
+        <a-entity id="feedback1" visible="false">
+          <a-text value="¡Modelo detectado!" color="#FFD700" position="0 0.6 0" align="center" opacity="0"
+            scale="1 1 1"
+            animation__fadein="property: opacity; to: 1; dur: 500; easing: easeOutCubic; startEvents: show"
+            animation__fadeout="property: opacity; to: 0; dur: 500; delay: 1500; easing: easeInCubic; startEvents: show">
+          </a-text>
+          <a-entity particle-system="preset: dust; color: #FFD700, #FFFFFF; particleCount: 100"
+            position="0 0.3 0"></a-entity>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
+
