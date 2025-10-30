@@ -54,7 +54,6 @@
     </style>
 
     <script>
-  
   document.addEventListener("DOMContentLoaded", () => {
     const sceneEl = document.querySelector("a-scene");
     const overlay = document.querySelector("#scanning-overlay");
@@ -63,38 +62,46 @@
       const targets = sceneEl.querySelectorAll("[mindar-image-target]");
       let visibleTargets = 0;
 
-          targets.forEach((target) => {
-            const container = target.querySelector(".text-container");
-            const textEntity = container.querySelector("a-text");
+      const typeWriter = (text, element, speed = 40) => {
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i <= text.length) {
+            element.setAttribute("value", text.substring(0, i));
+            i++;
+          } else {
+            clearInterval(interval);
+          }
+        }, speed);
+      };
 
-            const typeWriter = (text, element, speed = 40) => {
-              let i = 0;
-              const interval = setInterval(() => {
-                if (i <= text.length) {
-                  element.setAttribute("value", text.substring(0, i));
-                  i++;
-                } else {
-                  clearInterval(interval);
-                }
-              }, speed);
-            };
+      targets.forEach((target) => {
+        const container = target.querySelector(".text-container");
+        const textEntity = container.querySelector("a-text");
 
-            target.addEventListener("targetFound", () => {
-              container.setAttribute("visible", true);
-              container.emit("show");
+        target.addEventListener("targetFound", () => {
+          visibleTargets++;
+          overlay.classList.add("hidden"); 
 
-              const fullText = textEntity.getAttribute("data-fulltext");
-              textEntity.setAttribute("value", ""); 
-              typeWriter(fullText, textEntity, 40);
-            });
+          container.setAttribute("visible", true);
+          container.emit("show");
 
-            target.addEventListener("targetLost", () => {
-              container.setAttribute("visible", false);
-            });
-          });
+          const fullText = textEntity.getAttribute("data-fulltext");
+          textEntity.setAttribute("value", ""); 
+          typeWriter(fullText, textEntity, 40);
+        });
+
+        target.addEventListener("targetLost", () => {
+          visibleTargets = Math.max(visibleTargets - 1, 0);
+          if (visibleTargets === 0) {
+            overlay.classList.remove("hidden"); 
+          }
+          container.setAttribute("visible", false);
         });
       });
-    </script>
+    });
+  });
+</script>
+
   </head>
 
   <body>
@@ -161,6 +168,7 @@ La Luna."
     </a-scene>
   </body>
 </html>
+
 
 
 
