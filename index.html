@@ -116,10 +116,19 @@
             const container = target.querySelector(".text-container");
             const textEntity = container.querySelector("a-text");
 
+            
+
             target.addEventListener("targetFound", () => {
               overlay.classList.add("hidden");
               container.setAttribute("visible", true);
               container.emit("show");
+
+              const videoEl = target.querySelector("a-video");
+  if (videoEl) {
+    const vid = document.querySelector(videoEl.getAttribute("src"));
+    vid.play();
+    videoEl.setAttribute("visible", true);
+  }
 
               const fullText = textEntity.getAttribute("data-fulltext");
               textEntity.setAttribute("value", "");
@@ -129,6 +138,14 @@
             });
 
             target.addEventListener("targetLost", () => {
+
+              const videoEl = target.querySelector("a-video");
+  if (videoEl) {
+    const vid = document.querySelector(videoEl.getAttribute("src"));
+    vid.pause();
+    videoEl.setAttribute("visible", false);
+  }
+              
               overlay.classList.remove("hidden");
               container.setAttribute("visible", false);
               nextBtn.style.display = "none";
@@ -185,6 +202,17 @@ La Luna."
             font="https://cdn.aframe.io/fonts/DejaVu-sdf.fnt"
           ></a-text>
         </a-entity>
+
+        <a-video
+    id="video1"
+    src="#animacion1"
+    width="1.3"
+    height="0.75"
+    position="0 0.6 0"
+    autoplay="false"
+    loop="true"
+    visible="false"
+  ></a-video>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 1">
@@ -257,8 +285,20 @@ Desde entonces, el pequeño raton siguio sintiendo miedo a veces, pero habia apr
       </a-entity>
 
     </a-scene>
+
+    <a-assets>
+  <video
+    id="animacion1"
+    src=".pagina1.mp4"
+    preload="auto"
+    loop="true"
+    playsinline
+    crossorigin="anonymous">
+  </video>
+</a-assets>
   </body>
 </html>
+
 
 
 
