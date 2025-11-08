@@ -57,6 +57,9 @@
         0%, 80%, 100% { opacity: 0.3; }
         40% { opacity: 1; }
       }
+
+              .hidden {
+    display: none !important;
     </style>
 
     <script>
@@ -139,7 +142,7 @@
     </div>
 
     <a-scene
-       mindar-image="imageTargetSrc: ./cuento1.mind; maxTrack: 1"
+      mindar-image="uiScanning: #scanning-overlay; imageTargetSrc: ./cuento1.mind; maxTrack: 1"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
@@ -169,4 +172,5 @@
     </a-assets>
   </body>
 </html>
+
 
