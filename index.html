@@ -3,173 +3,181 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
     <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        font-family: 'IM Fell English SC', serif;
-      }
-
-      #scanning-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.85);
+      body { margin: 0; overflow: hidden; }
+      #menu {
+        position: fixed;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px 20px;
+        border-radius: 15px;
         color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.3em;
-        z-index: 9999;
-        transition: opacity 0.6s ease;
-        opacity: 1;
+        font-family: sans-serif;
+        z-index: 999;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+        display: none;
+      }
+      #menu button {
+        margin: 8px;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 10px;
+        background: #1e90ff;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      #menu button:hover { background: #4682b4; }
+      #story-box { margin-top: 10px; font-size: 15px; line-height: 1.4; }
+
+      #scan-message {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.75);
+        padding: 12px 18px;
+        border-radius: 12px;
+        color: white;
+        font-family: sans-serif;
+        z-index: 1000;
         text-align: center;
       }
-
-      .hidden {
-        opacity: 0;
-        pointer-events: none;
+      #scan-message img {
+        display: block;
+        margin: 10px auto 0 auto;
+        max-width: 150px;
+        border-radius: 8px;
       }
-
-      .dot-loader {
-        display: flex;
-        gap: 0.4em;
-        margin-top: 1em;
-      }
-
-      .dot-loader span {
-        width: 10px;
-        height: 10px;
-        background: white;
-        border-radius: 50%;
-        animation: blink 1.4s infinite ease-in-out both;
-      }
-
-      .dot-loader span:nth-child(1) { animation-delay: 0s; }
-      .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
-      .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
-
-      @keyframes blink {
-        0%, 80%, 100% { opacity: 0.3; }
-        40% { opacity: 1; }
-      }
-
-              .hidden {
-    display: none !important;
     </style>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const sceneEl = document.querySelector("a-scene");
-        const overlay = document.querySelector("#scanning-overlay");
-
-        sceneEl.addEventListener("loaded", () => {
-          const targets = sceneEl.querySelectorAll("[mindar-image-target]");
-
-          targets.forEach((target) => {
-            target.addEventListener("targetFound", () => {
-              overlay.classList.add("hidden");
-
-              const videoEl = target.querySelector("a-video");
-              if (videoEl) {
-                const vid = document.querySelector(videoEl.getAttribute("src"));
-                vid.play();
-                videoEl.setAttribute("visible", true);
-              }
-            });
-
-            target.addEventListener("targetLost", () => {
-              const videoEl = target.querySelector("a-video");
-              if (videoEl) {
-                const vid = document.querySelector(videoEl.getAttribute("src"));
-                vid.pause();
-                videoEl.setAttribute("visible", false);
-              }
-              overlay.classList.remove("hidden");
-            });
-          });
-        });
-      });
-
-      // Componente para rotar modelos con el dedo
-      AFRAME.registerComponent('touch-rotation', {
-        schema: { speed: {default: 1} },
-        init: function () {
-          this.startX = 0;
-          this.rotationY = 0;
-          this.isDragging = false;
-          this.handleTouchStart = this.handleTouchStart.bind(this);
-          this.handleTouchMove = this.handleTouchMove.bind(this);
-          this.handleTouchEnd = this.handleTouchEnd.bind(this);
-          this.el.sceneEl.canvas.addEventListener('touchstart', this.handleTouchStart);
-          this.el.sceneEl.canvas.addEventListener('touchmove', this.handleTouchMove);
-          this.el.sceneEl.canvas.addEventListener('touchend', this.handleTouchEnd);
-        },
-        remove: function () {
-          this.el.sceneEl.canvas.removeEventListener('touchstart', this.handleTouchStart);
-          this.el.sceneEl.canvas.removeEventListener('touchmove', this.handleTouchMove);
-          this.el.sceneEl.canvas.removeEventListener('touchend', this.handleTouchEnd);
-        },
-        handleTouchStart: function (e) {
-          if (e.touches.length === 1) {
-            this.isDragging = true;
-            this.startX = e.touches[0].pageX;
-            this.rotationY = this.el.getAttribute('rotation').y;
-          }
-        },
-        handleTouchMove: function (e) {
-          if (this.isDragging && e.touches.length === 1) {
-            const deltaX = e.touches[0].pageX - this.startX;
-            const newY = this.rotationY + deltaX * 0.5 * this.data.speed;
-            this.el.setAttribute('rotation', {x: 0, y: newY, z: 0});
-          }
-        },
-        handleTouchEnd: function () {
-          this.isDragging = false;
-        }
-      });
-    </script>
   </head>
-
   <body>
-    <div id="scanning-overlay">
-      📖 Apunta tu cámara a una página del cuento para verla cobrar vida ✨
-      <div class="dot-loader"><span></span><span></span><span></span></div>
+    <!-- Mensaje inicial -->
+    <div id="scan-message">
+      Escanea una de las páginas del cuento con tu cámara para comenzar 📖
+      <img id="scan-image" src="./page1.png" alt="Página del cuento">
     </div>
 
+    <!-- Cuadro con el texto del cuento -->
+    <div id="menu">
+      <div id="story-box"></div>
+    </div>
+
+    <!-- Escena de A-Frame y MindAR -->
     <a-scene
-      mindar-image="uiScanning: #scanning-overlay; imageTargetSrc: ./cuento1.mind; maxTrack: 1"
+      mindar-image="imageTargetSrc: ./cuento1.mind; maxTrack: 1"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
-      embedded>
-      
-      <a-camera position="0 0 0" look-controls="enabled: false"
-        cursor="fuse: false; rayOrigin: mouse;" raycaster="objects: .clickable">
-      </a-camera>
+    >
+      <a-assets>
+        <!-- Modelos del cuento -->
+        <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
+        <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
+        <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
+        <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
+      </a-assets>
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-entity gltf-model="#escena1Model" position="0 -0.3 0" scale="0.1 0.1 0.1" touch-rotation></a-entity>
-        <a-video id="video1" src="#animacion1" width="1.3" height="0.75" position="0 0.6 0" autoplay="false" loop="true" visible="false"></a-video>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <!-- Página 1 -->
+      <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
+        <a-entity gltf-model="#PageModel1"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.8 0.8 0.8"
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
+        </a-entity>
       </a-entity>
 
-      <a-entity mindar-image-target="targetIndex: 1"></a-entity>
+      <!-- Página 2 -->
+      <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
+        <a-entity gltf-model="#PageModel2"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.8 0.8 0.8"
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
+        </a-entity>
+      </a-entity>
 
-      <a-entity mindar-image-target="targetIndex: 2"></a-entity>
+      <!-- Página 3 -->
+      <a-entity id="target-page3" mindar-image-target="targetIndex: 2">
+        <a-entity gltf-model="#PageModel3"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.8 0.8 0.8"
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
+        </a-entity>
+      </a-entity>
 
-      <a-entity mindar-image-target="targetIndex: 3"></a-entity>
-
+      <!-- Página 4 -->
+      <a-entity id="target-page4" mindar-image-target="targetIndex: 3">
+        <a-entity gltf-model="#PageModel4"
+          position="0 0 0"
+          rotation="0 0 0"
+          scale="0.8 0.8 0.8"
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
+        </a-entity>
+      </a-entity>
     </a-scene>
 
-    <a-assets>
-      <video id="animacion1" src="./pagina1.mp4" preload="auto" loop="true" playsinline crossorigin="anonymous"></video>
-      <a-asset-item id="escena1Model" src="./Escena1.glb"></a-asset-item>
-    </a-assets>
+    <script>
+      const storyBox = document.querySelector("#story-box");
+      const menu = document.querySelector("#menu");
+      const scanMessage = document.querySelector("#scan-message");
+      const scanImage = document.querySelector("#scan-image");
+
+      // 🧾 Cuento dividido por páginas
+      const storyPages = [
+        "Había una vez un ratoncito llamado Milo, que vivía en una madriguera cálida bajo un roble viejo. Le encantaba salir por las noches a buscar semillas… pero había algo que lo asustaba: La Luna.",
+        "Grande, blanca y redonda, lo miraba desde lo alto con un brillo tan intenso que Milo sentía que lo estaba juzgando. —Seguro se ríe de mí porque soy pequeño… —pensaba mientras corría a esconderse entre las hojas.",
+        "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.
+—¿Por qué corres así? —preguntó la luciérnaga.
+—La Luna me mira —susurró Milo temblando.
+La luciérnaga soltó una risita luminosa.
+—¿Y qué tiene de malo que alguien te mire? Tal vez no te está mirando para juzgarte… sino para acompañarte.",
+        "4. Milo se quedó pensando. Esa noche decidió no esconderse. Se sentó en el pasto y miró hacia el cielo.
+La Luna, muy despacio, brilló aún más fuerte… como si le sonriera.
+Y Milo, por primera vez, le sonrió también.
+Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante: La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
+      ];
+
+      function showPageText(index) {
+        storyBox.innerText = storyPages[index];
+        menu.style.display = "block";
+        scanMessage.style.display = "none";
+      }
+
+      function hideAll() {
+        menu.style.display = "none";
+        scanMessage.style.display = "block";
+      }
+
+
+      document.querySelector("#target-page1").addEventListener("targetFound", () => showPageText(0));
+      document.querySelector("#target-page2").addEventListener("targetFound", () => showPageText(1));
+      document.querySelector("#target-page3").addEventListener("targetFound", () => showPageText(2));
+      document.querySelector("#target-page4").addEventListener("targetFound", () => showPageText(3));
+
+      // Si se pierde el marcador, ocultar texto
+      ["#target-page1","#target-page2","#target-page3","#target-page4"].forEach(id => {
+        document.querySelector(id).addEventListener("targetLost", hideAll);
+      });
+
+      // 🔄 Cambiar imagen de escaneo
+      const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
+      let scanIndex = 0;
+      setInterval(() => {
+        scanIndex = (scanIndex + 1) % scanImages.length;
+        scanImage.src = scanImages[scanIndex];
+      }, 2000);
+    </script>
   </body>
 </html>
+
 
