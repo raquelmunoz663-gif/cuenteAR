@@ -3,8 +3,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
     <style>
-      body { margin: 0; overflow: hidden; }
+      body { margin: 0; overflow: hidden; font-family: 'IM Fell English SC', serif; }
       #scanning-overlay {
         position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
         background: rgba(0,0,0,0.8); color: white; display:flex;
@@ -14,9 +15,8 @@
         position:absolute; bottom:20px; right:20px;
         background:white; border:none; padding:10px 15px;
         border-radius:6px; font-weight:bold; cursor:pointer; display:none;
+        z-index:10000;
       }
-
-      .hidden { display: none !important;
     </style>
 
     <script>
@@ -59,7 +59,6 @@
         const nextButton = document.querySelector("#next-button");
 
         let persistentEntity = null;
-
         const target = document.querySelector("[mindar-image-target]");
 
         target.addEventListener("targetFound",()=>{
@@ -69,33 +68,47 @@
           const videoEl = target.querySelector("a-video");
           const modelEl = target.querySelector("[gltf-model]");
           const vid = document.querySelector(videoEl.getAttribute("src"));
+
+          // reproducir video
           vid.play();
           videoEl.setAttribute("visible",true);
 
-          // Clonamos el contenido una sola vez
+          // si aún no existe el contenido persistente, crearlo
           if(!persistentEntity){
             persistentEntity = document.createElement("a-entity");
             persistentEntity.id = "persistent-content";
+            persistentEntity.setAttribute("position","0 0 -1.2"); // visible frente a la cámara
+            persistentEntity.setAttribute("rotation","0 0 0");
+
+            // clonar modelo y video
             const clonedModel = modelEl.cloneNode(true);
             const clonedVideo = videoEl.cloneNode(true);
+
+            clonedModel.setAttribute("visible","true");
+            clonedVideo.setAttribute("visible","true");
+
             persistentEntity.appendChild(clonedModel);
             persistentEntity.appendChild(clonedVideo);
             scene.appendChild(persistentEntity);
           }
         });
 
+        // mientras el target esté visible, actualizamos posición y rotación
         scene.addEventListener("loaded",()=>{
           scene.addEventListener("renderstart",()=>{
             scene.renderer.setAnimationLoop(()=>{
               if(persistentEntity && target.object3D.visible){
-                persistentEntity.object3D.position.copy(target.object3D.position);
-                persistentEntity.object3D.quaternion.copy(target.object3D.quaternion);
+                const pos = target.object3D.position;
+                const quat = target.object3D.quaternion;
+                persistentEntity.object3D.position.copy(pos);
+                persistentEntity.object3D.quaternion.copy(quat);
               }
             });
           });
         });
 
         target.addEventListener("targetLost",()=>{
+          // cuando se pierde el target, el contenido se queda donde estaba
         });
 
         nextButton.addEventListener("click",()=>{
@@ -105,11 +118,12 @@
           }
           overlay.style.display="flex";
           nextButton.style.display="none";
-          alert("Pasarías a la siguiente página aquí");
+          alert("📖 Aquí podrías cargar la siguiente página del cuento");
         });
       });
     </script>
   </head>
+
   <body>
     <div id="scanning-overlay">📖 Escanea la página del cuento ✨</div>
     <button id="next-button">➡️ Siguiente página</button>
@@ -121,13 +135,13 @@
       vr-mode-ui="enabled:false"
       device-orientation-permission-ui="enabled:false"
       embedded>
-      
+
       <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
         <a-entity gltf-model="#escena1Model" position="0 -0.3 0" scale="0.1 0.1 0.1" touch-rotation></a-entity>
-        <a-video id="video1" src="#animacion1" width="1.3" height="0.75" position="0 0.6 0"
-          autoplay="false" loop="true" visible="false"></a-video>
+        <a-video id="video1" src="#animacion1" width="1.3" height="0.75"
+                 position="0 0.6 0" autoplay="false" loop="true" visible="false"></a-video>
       </a-entity>
     </a-scene>
 
@@ -137,4 +151,3 @@
     </a-assets>
   </body>
 </html>
-
