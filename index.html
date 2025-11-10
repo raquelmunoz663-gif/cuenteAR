@@ -76,9 +76,107 @@
         cursor: pointer;
       }
       #controls button:hover { background: #666; }
+
+
+          /* 🌙 Pantalla de inicio */
+#start-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #000428, #004e92);
+  color: white;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 2000;
+  text-align: center;
+}
+#start-content img#cover-image {
+  width: 200px;
+  max-width: 70%;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.4);
+}
+#start-content h1 {
+  font-size: 2em;
+  margin: 10px 0 5px 0;
+}
+#start-content p { margin-bottom: 15px; color: #cce7ff; }
+#start-content button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #1e90ff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+#start-content button:hover { background: #4682b4; }
+
+/* 🌟 Créditos (modal) */
+#credits-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2100;
+  justify-content: center;
+  align-items: center;
+}
+#credits-box {
+  background: #fff;
+  color: #000;
+  padding: 20px 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 300px;
+}
+#credits-box h2 {
+  margin-top: 0;
+  color: #1e90ff;
+}
+#credits-box button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1e90ff;
+  color: white;
+  cursor: pointer;
+}
+#credits-box button:hover { background: #4682b4; }
+
     </style>
   </head>
   <body>
+
+    <!-- 🌟 Pantalla de inicio -->
+<div id="start-screen">
+  <div id="start-content">
+    <img src="./portada.png" alt="Portada del cuento" id="cover-image">
+    <h1>🌙 Milo y la Luna</h1>
+    <p>Un cuento en Realidad Aumentada</p>
+    <button id="btnStartStory">Iniciar cuento</button>
+    <button id="btnCredits">Créditos</button>
+  </div>
+</div>
+
+<!-- 🌟 Modal de créditos -->
+<div id="credits-modal">
+  <div id="credits-box">
+    <h2>Créditos</h2>
+    <p><strong>Autor:</strong> Equipo dinamita</p>
+    <p><strong>Modelado 3D:</strong> Sofi y Anne</p>
+    <p><strong>Arte:</strong>Lucy</p>
+    <p><strong>Desarrollo:</strong> Raquel</p>
+    <button id="btnCloseCredits">Cerrar</button>
+  </div>
+</div>
+
     <!-- 📷 Mensaje inicial -->
     <div id="scan-message">
       Escanea una de las páginas del cuento para comenzar 📖
@@ -124,7 +222,7 @@
         <a-entity gltf-model="#PageModel1"
           position="0 0 0"
           rotation="0 0 0"
-          scale="0.8 0.8 0.8"
+          scale="0.5 0.5 0.5"
           animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
         </a-entity>
       </a-entity>
@@ -134,7 +232,7 @@
         <a-entity gltf-model="#PageModel2"
           position="0 0 0"
           rotation="0 0 0"
-          scale="0.8 0.8 0.8"
+          scale="0.5 0.5 0.5"
           animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0">
         </a-entity>
       </a-entity>
@@ -274,10 +372,41 @@
     scanIndex = (scanIndex + 1) % scanImages.length;
     scanImage.src = scanImages[scanIndex];
   }, 2000);
+
+    // 🌟 Interfaz de inicio y créditos
+const startScreen = document.getElementById("start-screen");
+const creditsModal = document.getElementById("credits-modal");
+const btnStartStory = document.getElementById("btnStartStory");
+const btnCredits = document.getElementById("btnCredits");
+const btnCloseCredits = document.getElementById("btnCloseCredits");
+
+// Al iniciar, ocultamos la interfaz AR
+scanMessage.style.display = "none";
+menu.style.display = "none";
+document.getElementById("controls").style.display = "none";
+
+// Botón "Iniciar cuento"
+btnStartStory.addEventListener("click", () => {
+  startScreen.style.display = "none";
+  scanMessage.style.display = "block";
+  document.getElementById("controls").style.display = "flex";
+});
+
+// Botón "Créditos"
+btnCredits.addEventListener("click", () => {
+  creditsModal.style.display = "flex";
+});
+
+// Botón "Cerrar créditos"
+btnCloseCredits.addEventListener("click", () => {
+  creditsModal.style.display = "none";
+});
+
 </script>
 
   </body>
 </html>
+
 
 
 
