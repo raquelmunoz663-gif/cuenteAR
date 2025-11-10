@@ -5,6 +5,8 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
       body { margin: 0; overflow: hidden; }
+
+      /* 📘 Cuadro del cuento */
       #menu {
         position: fixed;
         bottom: 5px;
@@ -17,12 +19,12 @@
         font-family: sans-serif;
         z-index: 999;
         text-align: center;
-        width: 80%;
-        max-width: 400px;
+        width: 85%;
+        max-width: 420px;
         display: none;
       }
       #menu button {
-        margin: 8px;
+        margin: 5px;
         padding: 8px 15px;
         border: none;
         border-radius: 10px;
@@ -34,6 +36,7 @@
       #menu button:hover { background: #4682b4; }
       #story-box { margin-top: 10px; font-size: 15px; line-height: 1.4; }
 
+      /* 🧭 Mensaje de escaneo */
       #scan-message {
         position: fixed;
         top: 20px;
@@ -53,30 +56,61 @@
         max-width: 150px;
         border-radius: 8px;
       }
+
+      /* 🎮 Controles del sistema AR */
+      #controls {
+        position: fixed;
+        bottom: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        gap: 10px;
+      }
+      #controls button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        background: #444;
+        color: white;
+        cursor: pointer;
+      }
+      #controls button:hover { background: #666; }
     </style>
   </head>
   <body>
-    <!-- Mensaje inicial -->
+    <!-- 📷 Mensaje inicial -->
     <div id="scan-message">
-      Escanea una de las páginas del cuento con tu cámara para comenzar 📖
+      Escanea una de las páginas del cuento para comenzar 📖
       <img id="scan-image" src="./page1.png" alt="Página del cuento">
     </div>
 
-    <!-- Cuadro con el texto del cuento -->
+    <!-- 📘 Cuadro del cuento -->
     <div id="menu">
       <div id="story-box"></div>
+      <div>
+        <button id="btnPrev">⟵ Anterior</button>
+        <button id="btnNext">Siguiente ⟶</button>
+      </div>
     </div>
 
-    <!-- Escena de A-Frame y MindAR -->
+    <!-- 🎮 Controles del sistema AR -->
+    <div id="controls">
+      <button id="btnStart">▷ Start</button>
+      <button id="btnPause">❚❚ Pause</button>
+      <button id="btnStop">⊘ Stop</button>
+    </div>
+
+    <!-- 🧱 Escena A-Frame + MindAR -->
     <a-scene
-      mindar-image="imageTargetSrc: ./cuento1.mind; maxTrack: 1"
+      mindar-image="imageTargetSrc: ./cuento-targets.mind; maxTrack: 1"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <!-- Modelos del cuento -->
+        <!-- Modelos 3D (uno por página del cuento) -->
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
         <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
@@ -130,54 +164,72 @@
       const storyBox = document.querySelector("#story-box");
       const menu = document.querySelector("#menu");
       const scanMessage = document.querySelector("#scan-message");
-      const scanImage = document.querySelector("#scan-image");
+
+      const btnNext = document.querySelector("#btnNext");
+      const btnPrev = document.querySelector("#btnPrev");
 
       // 🧾 Cuento dividido por páginas
       const storyPages = [
-        "Había una vez un ratoncito llamado Milo, que vivía en una madriguera cálida bajo un roble viejo. Le encantaba salir por las noches a buscar semillas… pero había algo que lo asustaba: La Luna.",
-        "Grande, blanca y redonda, lo miraba desde lo alto con un brillo tan intenso que Milo sentía que lo estaba juzgando. —Seguro se ríe de mí porque soy pequeño… —pensaba mientras corría a esconderse entre las hojas.",
-        "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.
-—¿Por qué corres así? —preguntó la luciérnaga.
-—La Luna me mira —susurró Milo temblando.
-La luciérnaga soltó una risita luminosa.
-—¿Y qué tiene de malo que alguien te mire? Tal vez no te está mirando para juzgarte… sino para acompañarte.",
-        "4. Milo se quedó pensando. Esa noche decidió no esconderse. Se sentó en el pasto y miró hacia el cielo.
-La Luna, muy despacio, brilló aún más fuerte… como si le sonriera.
-Y Milo, por primera vez, le sonrió también.
-Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante: La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
+        "Página 1: Había una vez, en un mar tranquilo, una pequeña ballena curiosa que soñaba con ver el cielo más allá del horizonte.",
+        "Página 2: Cada día nadaba más lejos, siguiendo los rayos de sol que se filtraban entre las olas. Su madre le decía: 'El océano es grande, pero tu sueño es aún mayor'.",
+        "Página 3: Una mañana encontró un pulpo sabio, que le enseñó que el valor no está en la distancia recorrida, sino en la aventura de aprender algo nuevo.",
+        "Página 4: Y así, la ballena regresó a casa, sabiendo que los sueños se cumplen cuando los sigues con el corazón abierto."
       ];
 
+      let currentPage = 0;
+      let arSystem;
+      const sceneEl = document.querySelector("a-scene");
+
+      // Mostrar texto
       function showPageText(index) {
         storyBox.innerText = storyPages[index];
         menu.style.display = "block";
         scanMessage.style.display = "none";
       }
-
       function hideAll() {
         menu.style.display = "none";
         scanMessage.style.display = "block";
       }
 
+      // Detectar targets (páginas)
+      document.querySelector("#target-page1").addEventListener("targetFound", () => { currentPage=0; showPageText(0); });
+      document.querySelector("#target-page2").addEventListener("targetFound", () => { currentPage=1; showPageText(1); });
+      document.querySelector("#target-page3").addEventListener("targetFound", () => { currentPage=2; showPageText(2); });
+      document.querySelector("#target-page4").addEventListener("targetFound", () => { currentPage=3; showPageText(3); });
 
-      document.querySelector("#target-page1").addEventListener("targetFound", () => showPageText(0));
-      document.querySelector("#target-page2").addEventListener("targetFound", () => showPageText(1));
-      document.querySelector("#target-page3").addEventListener("targetFound", () => showPageText(2));
-      document.querySelector("#target-page4").addEventListener("targetFound", () => showPageText(3));
-
-      // Si se pierde el marcador, ocultar texto
       ["#target-page1","#target-page2","#target-page3","#target-page4"].forEach(id => {
         document.querySelector(id).addEventListener("targetLost", hideAll);
       });
 
-      // 🔄 Cambiar imagen de escaneo
+      // Navegación manual del cuento
+      btnNext.addEventListener("click", ()=>{
+        currentPage = (currentPage + 1) % storyPages.length;
+        showPageText(currentPage);
+      });
+      btnPrev.addEventListener("click", ()=>{
+        currentPage = (currentPage - 1 + storyPages.length) % storyPages.length;
+        showPageText(currentPage);
+      });
+
+      // Sistema AR
+      sceneEl.addEventListener("loaded", ()=>{ arSystem = sceneEl.systems["mindar-image-system"]; });
+
+      document.querySelector("#btnStart").addEventListener("click", ()=> arSystem.start());
+      document.querySelector("#btnPause").addEventListener("click", ()=> arSystem.pause());
+      document.querySelector("#btnStop").addEventListener("click", ()=> {
+        arSystem.stop();
+        hideAll();
+      });
+
+      // Rotar imágenes del mensaje de escaneo
+      const scanImage = document.querySelector("#scan-image");
       const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
-      let scanIndex = 0;
-      setInterval(() => {
-        scanIndex = (scanIndex + 1) % scanImages.length;
-        scanImage.src = scanImages[scanIndex];
-      }, 2000);
+      let scanIndex=0;
+      setInterval(()=>{
+        scanIndex=(scanIndex+1)%scanImages.length;
+        scanImage.src=scanImages[scanIndex];
+      },2000);
     </script>
   </body>
 </html>
-
 
