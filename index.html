@@ -112,7 +112,7 @@
       <a-assets>
         <!-- Modelos 3D (uno por página del cuento) -->
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
-        <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
+        <a-asset-item id="PageModel2" src="./Escena1.glb"></a-asset-item>
         <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
       </a-assets>
@@ -160,77 +160,123 @@
       </a-entity>
     </a-scene>
 
-    <script>
-      const storyBox = document.querySelector("#story-box");
-      const menu = document.querySelector("#menu");
-      const scanMessage = document.querySelector("#scan-message");
+  <script>
+  const storyBox = document.querySelector("#story-box");
+  const menu = document.querySelector("#menu");
+  const scanMessage = document.querySelector("#scan-message");
+  const btnNext = document.querySelector("#btnNext");
+  const btnPrev = document.querySelector("#btnPrev");
 
-      const btnNext = document.querySelector("#btnNext");
-      const btnPrev = document.querySelector("#btnPrev");
+  // 📖 Cuento dividido por PÁGINAS y FRAGMENTOS
+  const storyPages = {
+    0: [
+      "Había una vez un ratoncito llamado Milo,",
+      "que vivía en una madriguera cálida bajo un roble viejo.",
+      "Le encantaba salir por las noches a buscar semillas…",
+      "pero había algo que lo asustaba: ¡La Luna!"
+    ],
+    1: [
+      "Grande, blanca y redonda,",
+      "lo miraba desde lo alto con un brillo tan intenso que Milo sentía que lo estaba juzgando.",
+      "—Seguro se ríe de mí porque soy pequeño… —",
+      "pensaba mientras corría a esconderse entre las hojas."
+    ],
+    2: [
+      "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.",
+      "—¿Por qué corres así? —preguntó la luciérnaga.",
+      "—La Luna me mira —susurró Milo temblando.",
+      "La luciérnaga soltó una risita luminosa.",
+      "—¿Y qué tiene de malo que alguien te mire? ",
+      "Tal vez no te está mirando para juzgarte… sino para acompañarte."
+    ],
+    3: [
+      "Milo se quedó pensando. Esa noche decidió no esconderse. ",
+      "Se sentó en el pasto y miró hacia el cielo.",
+      "La Luna, muy despacio, brilló aún más fuerte… como si le sonriera.,
+      "Y Milo, por primera vez, le sonrió también.",
+      "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:",
+      "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
+    ]
+  };
 
-      // 🧾 Cuento dividido por páginas
-      const storyPages = [
-        "Página 1: Había una vez, en un mar tranquilo, una pequeña ballena curiosa que soñaba con ver el cielo más allá del horizonte.",
-        "Página 2: Cada día nadaba más lejos, siguiendo los rayos de sol que se filtraban entre las olas. Su madre le decía: 'El océano es grande, pero tu sueño es aún mayor'.",
-        "Página 3: Una mañana encontró un pulpo sabio, que le enseñó que el valor no está en la distancia recorrida, sino en la aventura de aprender algo nuevo.",
-        "Página 4: Y así, la ballena regresó a casa, sabiendo que los sueños se cumplen cuando los sigues con el corazón abierto."
-      ];
+  let currentPage = null; // qué página está detectada
+  let currentFragment = 0; // qué texto dentro de esa página
+  let arSystem;
+  const sceneEl = document.querySelector("a-scene");
 
-      let currentPage = 0;
-      let arSystem;
-      const sceneEl = document.querySelector("a-scene");
+  function showCurrentFragment() {
+    if (currentPage !== null) {
+      const fragments = storyPages[currentPage];
+      storyBox.innerText = fragments[currentFragment];
+      menu.style.display = "block";
+      scanMessage.style.display = "none";
+    }
+  }
 
-      // Mostrar texto
-      function showPageText(index) {
-        storyBox.innerText = storyPages[index];
-        menu.style.display = "block";
-        scanMessage.style.display = "none";
-      }
-      function hideAll() {
-        menu.style.display = "none";
-        scanMessage.style.display = "block";
-      }
+  function hideAll() {
+    menu.style.display = "none";
+    scanMessage.style.display = "block";
+  }
 
-      // Detectar targets (páginas)
-      document.querySelector("#target-page1").addEventListener("targetFound", () => { currentPage=0; showPageText(0); });
-      document.querySelector("#target-page2").addEventListener("targetFound", () => { currentPage=1; showPageText(1); });
-      document.querySelector("#target-page3").addEventListener("targetFound", () => { currentPage=2; showPageText(2); });
-      document.querySelector("#target-page4").addEventListener("targetFound", () => { currentPage=3; showPageText(3); });
+  // 🔹 Avanzar y retroceder dentro de una página
+  btnNext.addEventListener("click", () => {
+    if (currentPage !== null) {
+      const fragments = storyPages[currentPage];
+      currentFragment = (currentFragment + 1) % fragments.length;
+      showCurrentFragment();
+    }
+  });
 
-      ["#target-page1","#target-page2","#target-page3","#target-page4"].forEach(id => {
-        document.querySelector(id).addEventListener("targetLost", hideAll);
-      });
+  btnPrev.addEventListener("click", () => {
+    if (currentPage !== null) {
+      const fragments = storyPages[currentPage];
+      currentFragment = (currentFragment - 1 + fragments.length) % fragments.length;
+      showCurrentFragment();
+    }
+  });
 
-      // Navegación manual del cuento
-      btnNext.addEventListener("click", ()=>{
-        currentPage = (currentPage + 1) % storyPages.length;
-        showPageText(currentPage);
-      });
-      btnPrev.addEventListener("click", ()=>{
-        currentPage = (currentPage - 1 + storyPages.length) % storyPages.length;
-        showPageText(currentPage);
-      });
+  // 📸 Detección de cada página (target)
+  function setupTargetEvents(id, pageIndex) {
+    const el = document.querySelector(id);
+    el.addEventListener("targetFound", () => {
+      currentPage = pageIndex;
+      currentFragment = 0;
+      showCurrentFragment();
+    });
+    el.addEventListener("targetLost", () => {
+      currentPage = null;
+      hideAll();
+    });
+  }
 
-      // Sistema AR
-      sceneEl.addEventListener("loaded", ()=>{ arSystem = sceneEl.systems["mindar-image-system"]; });
+  setupTargetEvents("#target-page1", 0);
+  setupTargetEvents("#target-page2", 1);
+  setupTargetEvents("#target-page3", 2);
+  setupTargetEvents("#target-page4", 3);
 
-      document.querySelector("#btnStart").addEventListener("click", ()=> arSystem.start());
-      document.querySelector("#btnPause").addEventListener("click", ()=> arSystem.pause());
-      document.querySelector("#btnStop").addEventListener("click", ()=> {
-        arSystem.stop();
-        hideAll();
-      });
+  // 🎮 Controles del sistema AR
+  sceneEl.addEventListener("loaded", () => { arSystem = sceneEl.systems["mindar-image-system"]; });
 
-      // Rotar imágenes del mensaje de escaneo
-      const scanImage = document.querySelector("#scan-image");
-      const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
-      let scanIndex=0;
-      setInterval(()=>{
-        scanIndex=(scanIndex+1)%scanImages.length;
-        scanImage.src=scanImages[scanIndex];
-      },2000);
-    </script>
+  document.querySelector("#btnStart").addEventListener("click", () => arSystem.start());
+  document.querySelector("#btnPause").addEventListener("click", () => arSystem.pause());
+  document.querySelector("#btnStop").addEventListener("click", () => {
+    arSystem.stop();
+    currentPage = null;
+    hideAll();
+  });
+
+  // 🔄 Imagen del mensaje de escaneo
+  const scanImage = document.querySelector("#scan-image");
+  const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
+  let scanIndex = 0;
+  setInterval(() => {
+    scanIndex = (scanIndex + 1) % scanImages.length;
+    scanImage.src = scanImages[scanIndex];
+  }, 2000);
+</script>
+
   </body>
 </html>
+
 
 
