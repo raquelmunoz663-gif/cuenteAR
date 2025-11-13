@@ -444,7 +444,15 @@ btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
+
+  // 🔹 Iniciar el sistema AR al hacer clic
+  if (!arSystem) {
+    const sceneEl = document.querySelector("a-scene");
+    arSystem = sceneEl.systems["mindar-image-system"];
+  }
+  arSystem.start();
 });
+    
 
 // Botón "Créditos"
 btnCredits.addEventListener("click", () => {
@@ -460,3 +468,4 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
+
