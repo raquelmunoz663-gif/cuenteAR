@@ -150,6 +150,19 @@
 }
 #credits-box button:hover { background: #4682b4; }
 
+  #btnPlayAudio {
+  margin-top: 8px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 10px;
+  background: #32cd32;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+#btnPlayAudio:hover {
+  background: #228b22;
+}
     </style>
   </head>
   <body>
@@ -186,6 +199,9 @@
     <!-- 📘 Cuadro del cuento -->
     <div id="menu">
       <div id="story-box"></div>
+       <div>
+        <button id="btnPlayAudio">🔊 Reproducir audio</button>
+      </div>
       <div>
         <button id="btnPrev">⟵ Anterior</button>
         <button id="btnNext">Siguiente ⟶</button>
@@ -213,6 +229,10 @@
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
         <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
+        <audio id="audio1" src="./audio1.mp3" preload="auto"></audio>
+        <audio id="audio2" src="./audio2.mp3" preload="auto"></audio>
+        <audio id="audio3" src="./audio3.mp3" preload="auto"></audio>
+        <audio id="audio4" src="./audio4.mp3" preload="auto"></audio>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -269,6 +289,15 @@
   const btnNext = document.querySelector("#btnNext");
   const btnPrev = document.querySelector("#btnPrev");
 
+  const btnPlayAudio = document.querySelector("#btnPlayAudio");
+
+  const pageAudios = {
+    0: document.querySelector("#audio1"),
+    1: document.querySelector("#audio2"),
+    2: document.querySelector("#audio3"),
+    3: document.querySelector("#audio4")
+  };
+
   // 📖 Cuento dividido por PÁGINAS y FRAGMENTOS
   const storyPages = {
   0: [
@@ -321,6 +350,22 @@
     scanMessage.style.display = "block";
   }
 
+  function stopAllAudios() {
+  Object.values(pageAudios).forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+}
+
+function playCurrentAudio() {
+  if (currentPage !== null) {
+    stopAllAudios();
+    const audio = pageAudios[currentPage];
+    if (audio) audio.play();
+  }
+}
+
+
   // 🔹 Avanzar y retroceder dentro de una página
   btnNext.addEventListener("click", () => {
     if (currentPage !== null) {
@@ -338,6 +383,10 @@
     }
   });
 
+  btnPlayAudio.addEventListener("click", playCurrentAudio);
+
+  
+
   // 📸 Detección de cada página (target)
   function setupTargetEvents(id, pageIndex) {
     const el = document.querySelector(id);
@@ -348,6 +397,7 @@
     });
     el.addEventListener("targetLost", () => {
       currentPage = null;
+      stopAllAudios();
       hideAll();
     });
   }
@@ -410,15 +460,3 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
