@@ -444,6 +444,11 @@ btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
+  if (arSystem) {
+    arSystem.start();
+  } else {
+    sceneEl.addEventListener("loaded", () => arSystem.start());
+  }
 });
 
 // Botón "Créditos"
@@ -460,6 +465,7 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
+
 
 
 
