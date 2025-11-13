@@ -60,7 +60,7 @@
       /* 🎮 Controles del sistema AR */
       #controls {
         position: fixed;
-        bottom: 200px;
+        bottom: 190px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 1000;
@@ -444,11 +444,6 @@ btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
-  if (arSystem) {
-    arSystem.start();
-  } else {
-    sceneEl.addEventListener("loaded", () => arSystem.start());
-  }
 });
 
 // Botón "Créditos"
@@ -465,7 +460,3 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
-
-
-
-
