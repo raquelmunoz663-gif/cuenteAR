@@ -302,6 +302,32 @@
 
 
 
+  #btnPlayAudio {
+
+  margin-top: 8px;
+
+  padding: 8px 15px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #32cd32;
+
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+#btnPlayAudio:hover {
+
+  background: #228b22;
+
+}
+
     </style>
 
   </head>
@@ -374,6 +400,12 @@
 
       <div id="story-box"></div>
 
+       <div>
+
+        <button id="btnPlayAudio">🔊 Reproducir audio</button>
+
+      </div>
+
       <div>
 
         <button id="btnPrev">⟵ Anterior</button>
@@ -428,6 +460,14 @@
 
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
 
+        <audio id="audio1" src="./audio1.mp3" preload="auto"></audio>
+
+        <audio id="audio2" src="./audio2.mp3" preload="auto"></audio>
+
+        <audio id="audio3" src="./audio3.mp3" preload="auto"></audio>
+
+        <audio id="audio4" src="./audio4.mp3" preload="auto"></audio>
+
       </a-assets>
 
 
@@ -448,11 +488,9 @@
 
           scale="0.3 0.3 0.3"
 
-          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
 
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
 
         </a-entity>
 
@@ -472,11 +510,9 @@
 
           scale="0.3 0.3 0.3"
 
-          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
 
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
 
         </a-entity>
 
@@ -496,11 +532,9 @@
 
           scale="0.3 0.3 0.3"
 
-          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
 
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
 
         </a-entity>
 
@@ -520,11 +554,9 @@
 
           scale="0.3 0.3 0.3"
 
-          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
 
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
 
         </a-entity>
 
@@ -545,6 +577,24 @@
   const btnNext = document.querySelector("#btnNext");
 
   const btnPrev = document.querySelector("#btnPrev");
+
+
+
+  const btnPlayAudio = document.querySelector("#btnPlayAudio");
+
+
+
+  const pageAudios = {
+
+    0: document.querySelector("#audio1"),
+
+    1: document.querySelector("#audio2"),
+
+    2: document.querySelector("#audio3"),
+
+    3: document.querySelector("#audio4")
+
+  };
 
 
 
@@ -652,6 +702,38 @@
 
 
 
+  function stopAllAudios() {
+
+  Object.values(pageAudios).forEach(audio => {
+
+    audio.pause();
+
+    audio.currentTime = 0;
+
+  });
+
+}
+
+
+
+function playCurrentAudio() {
+
+  if (currentPage !== null) {
+
+    stopAllAudios();
+
+    const audio = pageAudios[currentPage];
+
+    if (audio) audio.play();
+
+  }
+
+}
+
+
+
+
+
   // 🔹 Avanzar y retroceder dentro de una página
 
   btnNext.addEventListener("click", () => {
@@ -686,6 +768,14 @@
 
 
 
+  btnPlayAudio.addEventListener("click", playCurrentAudio);
+
+
+
+  
+
+
+
   // 📸 Detección de cada página (target)
 
   function setupTargetEvents(id, pageIndex) {
@@ -705,6 +795,8 @@
     el.addEventListener("targetLost", () => {
 
       currentPage = null;
+
+      stopAllAudios();
 
       hideAll();
 
@@ -829,4 +921,5 @@ btnCloseCredits.addEventListener("click", () => {
   </body>
 
 </html>
+
 
