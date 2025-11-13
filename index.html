@@ -1,476 +1,832 @@
 <html>
+
   <head>
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
     <style>
+
       body { margin: 0; overflow: hidden; }
 
+
+
       /* 📘 Cuadro del cuento */
+
       #menu {
+
         position: fixed;
+
         bottom: 5px;
+
         left: 50%;
+
         transform: translateX(-50%);
+
         background: rgba(0, 0, 0, 0.7);
+
         padding: 15px 20px;
+
         border-radius: 15px;
+
         color: white;
+
         font-family: sans-serif;
+
         z-index: 999;
+
         text-align: center;
+
         width: 85%;
+
         max-width: 420px;
+
         display: none;
+
       }
+
       #menu button {
+
         margin: 5px;
+
         padding: 8px 15px;
+
         border: none;
+
         border-radius: 10px;
+
         background: #1e90ff;
+
         color: white;
+
         font-weight: bold;
+
         cursor: pointer;
+
       }
+
       #menu button:hover { background: #4682b4; }
+
       #story-box { margin-top: 10px; font-size: 15px; line-height: 1.4; }
 
+
+
       /* 🧭 Mensaje de escaneo */
+
       #scan-message {
+
         position: fixed;
+
         top: 20px;
+
         left: 50%;
+
         transform: translateX(-50%);
+
         background: rgba(0,0,0,0.75);
+
         padding: 12px 18px;
+
         border-radius: 12px;
+
         color: white;
+
         font-family: sans-serif;
+
         z-index: 1000;
+
         text-align: center;
-      }
-      #scan-message img {
-        display: block;
-        margin: 10px auto 0 auto;
-        max-width: 150px;
-        border-radius: 8px;
+
       }
 
-      /* 🎮 Controles del sistema AR */
-      #controls {
-        position: fixed;
-        bottom: 120px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-      }
-      #controls button {
-        padding: 6px 12px;
-        border: none;
+      #scan-message img {
+
+        display: block;
+
+        margin: 10px auto 0 auto;
+
+        max-width: 150px;
+
         border-radius: 8px;
-        background: #444;
-        color: white;
-        cursor: pointer;
+
       }
+
+
+
+      /* 🎮 Controles del sistema AR */
+
+      #controls {
+
+        position: fixed;
+
+        bottom: 120px;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        z-index: 1000;
+
+        display: flex;
+
+        gap: 10px;
+
+      }
+
+      #controls button {
+
+        padding: 6px 12px;
+
+        border: none;
+
+        border-radius: 8px;
+
+        background: #444;
+
+        color: white;
+
+        cursor: pointer;
+
+      }
+
       #controls button:hover { background: #666; }
 
 
+
+
+
           /* 🌙 Pantalla de inicio */
+
 #start-screen {
+
   position: fixed;
+
   inset: 0;
+
   background: radial-gradient(circle at center, #000428, #004e92);
+
   color: white;
+
   font-family: "Poppins", sans-serif;
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
+
   flex-direction: column;
+
   z-index: 2000;
+
   text-align: center;
+
 }
+
 #start-content img#cover-image {
+
   width: 200px;
+
   max-width: 70%;
+
   margin-bottom: 15px;
+
   border-radius: 10px;
+
   box-shadow: 0 0 20px rgba(255,255,255,0.4);
+
 }
+
 #start-content h1 {
+
   font-size: 2em;
+
   margin: 10px 0 5px 0;
+
 }
+
 #start-content p { margin-bottom: 15px; color: #cce7ff; }
+
 #start-content button {
+
   margin: 5px;
+
   padding: 10px 20px;
+
   border: none;
+
   border-radius: 12px;
+
   background: #1e90ff;
+
   color: white;
+
   font-weight: bold;
+
   cursor: pointer;
+
   transition: background 0.3s;
+
 }
+
 #start-content button:hover { background: #4682b4; }
 
+
+
 /* 🌟 Créditos (modal) */
+
 #credits-modal {
+
   display: none;
+
   position: fixed;
+
   inset: 0;
+
   background: rgba(0, 0, 0, 0.7);
+
   z-index: 2100;
+
   justify-content: center;
+
   align-items: center;
+
 }
+
 #credits-box {
+
   background: #fff;
+
   color: #000;
+
   padding: 20px 30px;
+
   border-radius: 12px;
+
   text-align: center;
+
   max-width: 300px;
+
 }
+
 #credits-box h2 {
+
   margin-top: 0;
+
   color: #1e90ff;
+
 }
+
 #credits-box button {
+
   margin-top: 10px;
+
   padding: 6px 12px;
+
   border: none;
+
   border-radius: 8px;
+
   background: #1e90ff;
+
   color: white;
+
   cursor: pointer;
+
 }
+
 #credits-box button:hover { background: #4682b4; }
 
-  #btnPlayAudio {
-  margin-top: 8px;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 10px;
-  background: #32cd32;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-#btnPlayAudio:hover {
-  background: #228b22;
-}
+
+
     </style>
+
   </head>
+
   <body>
 
+
+
     <!-- 🌟 Pantalla de inicio -->
+
 <div id="start-screen">
+
   <div id="start-content">
+
     <img src="./portada.png" alt="Portada del cuento" id="cover-image">
+
     <h1>🌙 Mauro y la Luna</h1>
+
     <p>Un cuento en Realidad Aumentada</p>
+
     <button id="btnStartStory">Iniciar cuento</button>
+
     <button id="btnCredits">Créditos</button>
+
   </div>
+
 </div>
+
+
 
 <!-- 🌟 Modal de créditos -->
+
 <div id="credits-modal">
+
   <div id="credits-box">
+
     <h2>Créditos</h2>
+
     <p><strong>Autor:</strong> Equipo dinamita</p>
+
     <p><strong>Modelado 3D:</strong> Sofi y Anne</p>
+
     <p><strong>Arte:</strong>Lucy</p>
+
     <p><strong>Desarrollo:</strong> Raquel</p>
+
     <button id="btnCloseCredits">Cerrar</button>
+
   </div>
+
 </div>
 
+
+
     <!-- 📷 Mensaje inicial -->
+
     <div id="scan-message">
+
       Escanea una de las páginas del cuento para comenzar 📖
+
       <img id="scan-image" src="./page1.png" alt="Página del cuento">
+
     </div>
 
-    <!-- 🎮 Controles del sistema AR -->
-    <div id="controls">
-      <button id="btnStart">▷ Start</button>
-      <button id="btnPause">❚❚ Pause</button>
-      <button id="btnStop">⊘ Stop</button>
-    </div>
+
 
     <!-- 📘 Cuadro del cuento -->
+
     <div id="menu">
+
       <div id="story-box"></div>
-       <div>
-        <button id="btnPlayAudio">🔊 Reproducir audio</button>
-      </div>
+
       <div>
+
         <button id="btnPrev">⟵ Anterior</button>
+
         <button id="btnNext">Siguiente ⟶</button>
+
       </div>
+
     </div>
 
-    
+
+
+    <!-- 🎮 Controles del sistema AR -->
+
+    <div id="controls">
+
+      <button id="btnStart">▷ Start</button>
+
+      <button id="btnPause">❚❚ Pause</button>
+
+      <button id="btnStop">⊘ Stop</button>
+
+    </div>
+
+
 
     <!-- 🧱 Escena A-Frame + MindAR -->
+
     <a-scene
+
       mindar-image="imageTargetSrc: ./cuento1.mind; maxTrack: 1"
+
       color-space="sRGB"
+
       renderer="colorManagement: true, physicallyCorrectLights"
+
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true"
+
+      device-orientation-permission-ui="enabled: false"
+
     >
+
       <a-assets>
+
         <!-- Modelos 3D (uno por página del cuento) -->
+
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
+
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
+
         <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
+
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
-        <audio id="audio1" src="./audio1.mp3" preload="auto"></audio>
-        <audio id="audio2" src="./audio2.mp3" preload="auto"></audio>
-        <audio id="audio3" src="./audio3.mp3" preload="auto"></audio>
-        <audio id="audio4" src="./audio4.mp3" preload="auto"></audio>
+
       </a-assets>
+
+
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+
+
       <!-- Página 1 -->
+
       <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
+
         <a-entity gltf-model="#PageModel1"
+
           position="0 0 -2"
+
           rotation="0 0 0"
+
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
-          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
+
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+
         </a-entity>
+
       </a-entity>
+
+
 
       <!-- Página 2 -->
+
       <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
+
         <a-entity gltf-model="#PageModel2"
+
           position="0 0 -2"
+
           rotation="0 0 0"
+
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
-          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
+
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+
         </a-entity>
+
       </a-entity>
+
+
 
       <!-- Página 3 -->
+
       <a-entity id="target-page3" mindar-image-target="targetIndex: 2">
+
         <a-entity gltf-model="#PageModel3"
+
           position="0 0 -2"
+
           rotation="0 0 0"
+
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
-          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
+
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+
         </a-entity>
+
       </a-entity>
+
+
 
       <!-- Página 4 -->
+
       <a-entity id="target-page4" mindar-image-target="targetIndex: 3">
+
         <a-entity gltf-model="#PageModel4"
+
           position="0 0 -2"
+
           rotation="0 0 0"
+
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 -2"
-          animation__spin="property: rotation; to: 0 450 -2; dur:6000; loop:true; easing:linear">
+
+          animation__float="property: position; dir: alternate; loop: true; dur: 2500; to: 0 0.2 0"
+
+           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+
         </a-entity>
+
       </a-entity>
+
     </a-scene>
 
+
+
   <script>
+
   const storyBox = document.querySelector("#story-box");
+
   const menu = document.querySelector("#menu");
+
   const scanMessage = document.querySelector("#scan-message");
+
   const btnNext = document.querySelector("#btnNext");
+
   const btnPrev = document.querySelector("#btnPrev");
 
-  const btnPlayAudio = document.querySelector("#btnPlayAudio");
 
-  const pageAudios = {
-    0: document.querySelector("#audio1"),
-    1: document.querySelector("#audio2"),
-    2: document.querySelector("#audio3"),
-    3: document.querySelector("#audio4")
-  };
 
   // 📖 Cuento dividido por PÁGINAS y FRAGMENTOS
+
   const storyPages = {
+
   0: [
+
     "Había una vez un ratoncito llamado Mauro,",
+
     "que vivía en una madriguera cálida bajo un roble viejo.",
+
     "Le encantaba salir por las noches a buscar semillas…",
+
     "pero había algo que lo asustaba: ¡La Luna!"
+
   ],
+
   1: [
+
     "Grande, blanca y redonda,",
+
     "lo miraba desde lo alto con un brillo tan intenso que Mauro sentía que lo estaba juzgando.",
+
     "—Seguro se ríe de mí porque soy pequeño… —",
+
     "pensaba mientras corría a esconderse entre las hojas."
+
   ],
+
   2: [
+
     "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.",
+
     "—¿Por qué corres así? —preguntó la luciérnaga.",
+
     "—La Luna me mira —susurró Milo temblando.",
+
     "La luciérnaga soltó una risita luminosa.",
+
     "—¿Y qué tiene de malo que alguien te mire?",
+
     "Tal vez no te está mirando para juzgarte… sino para acompañarte."
+
   ],
+
   3: [
+
     "Mauro se quedó pensando. Esa noche decidió no esconderse.",
+
     "Se sentó en el pasto y miró hacia el cielo.",
+
     "La Luna, muy despacio, brilló aún más fuerte… como si le sonriera.",
+
     "Y Mauro, por primera vez, le sonrió también.",
+
     "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:",
+
     "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
+
   ]
+
 };
 
 
+
+
+
   let currentPage = null; // qué página está detectada
+
   let currentFragment = 0; // qué texto dentro de esa página
+
   let arSystem;
+
   const sceneEl = document.querySelector("a-scene");
 
+
+
   function showCurrentFragment() {
+
     if (currentPage !== null) {
+
       const fragments = storyPages[currentPage];
+
       storyBox.innerText = fragments[currentFragment];
+
       menu.style.display = "block";
+
       scanMessage.style.display = "none";
+
     }
+
   }
+
+
 
   function hideAll() {
+
     menu.style.display = "none";
+
     scanMessage.style.display = "block";
+
   }
 
-  function stopAllAudios() {
-  Object.values(pageAudios).forEach(audio => {
-    audio.pause();
-    audio.currentTime = 0;
-  });
-}
-
-function playCurrentAudio() {
-  if (currentPage !== null) {
-    stopAllAudios();
-    const audio = pageAudios[currentPage];
-    if (audio) audio.play();
-  }
-}
 
 
   // 🔹 Avanzar y retroceder dentro de una página
+
   btnNext.addEventListener("click", () => {
+
     if (currentPage !== null) {
+
       const fragments = storyPages[currentPage];
+
       currentFragment = (currentFragment + 1) % fragments.length;
+
       showCurrentFragment();
+
     }
+
   });
+
+
 
   btnPrev.addEventListener("click", () => {
+
     if (currentPage !== null) {
+
       const fragments = storyPages[currentPage];
+
       currentFragment = (currentFragment - 1 + fragments.length) % fragments.length;
+
       showCurrentFragment();
+
     }
+
   });
 
-  btnPlayAudio.addEventListener("click", playCurrentAudio);
 
-  
 
   // 📸 Detección de cada página (target)
+
   function setupTargetEvents(id, pageIndex) {
+
     const el = document.querySelector(id);
+
     el.addEventListener("targetFound", () => {
+
       currentPage = pageIndex;
+
       currentFragment = 0;
+
       showCurrentFragment();
+
     });
+
     el.addEventListener("targetLost", () => {
+
       currentPage = null;
-      stopAllAudios();
+
       hideAll();
+
     });
+
   }
+
+
 
   setupTargetEvents("#target-page1", 0);
+
   setupTargetEvents("#target-page2", 1);
+
   setupTargetEvents("#target-page3", 2);
+
   setupTargetEvents("#target-page4", 3);
 
+
+
   // 🎮 Controles del sistema AR
+
   sceneEl.addEventListener("loaded", () => { arSystem = sceneEl.systems["mindar-image-system"]; });
 
+
+
   document.querySelector("#btnStart").addEventListener("click", () => arSystem.start());
+
   document.querySelector("#btnPause").addEventListener("click", () => arSystem.pause());
+
   document.querySelector("#btnStop").addEventListener("click", () => {
+
     arSystem.stop();
+
     currentPage = null;
+
     hideAll();
+
   });
 
+
+
   // 🔄 Imagen del mensaje de escaneo
+
   const scanImage = document.querySelector("#scan-image");
+
   const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
+
   let scanIndex = 0;
+
   setInterval(() => {
+
     scanIndex = (scanIndex + 1) % scanImages.length;
+
     scanImage.src = scanImages[scanIndex];
+
   }, 2000);
 
+
+
     // 🌟 Interfaz de inicio y créditos
+
 const startScreen = document.getElementById("start-screen");
+
 const creditsModal = document.getElementById("credits-modal");
+
 const btnStartStory = document.getElementById("btnStartStory");
+
 const btnCredits = document.getElementById("btnCredits");
+
 const btnCloseCredits = document.getElementById("btnCloseCredits");
 
+
+
 // Al iniciar, ocultamos la interfaz AR
+
 scanMessage.style.display = "none";
+
 menu.style.display = "none";
+
 document.getElementById("controls").style.display = "none";
 
+
+
 // Botón "Iniciar cuento"
+
 btnStartStory.addEventListener("click", () => {
+
   startScreen.style.display = "none";
+
   scanMessage.style.display = "block";
+
   document.getElementById("controls").style.display = "flex";
 
-  // 🔹 Iniciar el sistema AR al hacer clic
-  if (!arSystem) {
-    const sceneEl = document.querySelector("a-scene");
-    arSystem = sceneEl.systems["mindar-image-system"];
-  }
-  arSystem.start();
 });
-    
+
+
 
 // Botón "Créditos"
+
 btnCredits.addEventListener("click", () => {
+
   creditsModal.style.display = "flex";
+
 });
 
+
+
 // Botón "Cerrar créditos"
+
 btnCloseCredits.addEventListener("click", () => {
+
   creditsModal.style.display = "none";
+
 });
+
+
 
 </script>
 
+
+
   </body>
+
 </html>
-
-
-
 
