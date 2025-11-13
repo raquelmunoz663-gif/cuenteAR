@@ -162,6 +162,30 @@
 
 #credits-box button:hover { background: #4682b4; }
 
+
+  /* 🔊 Botón de audio */
+#btnAudio {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1200;
+  background: rgba(30, 144, 255, 0.9);
+  color: white;
+  font-size: 22px;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  display: none; /* Se muestra solo cuando hay una página activa */
+}
+
+#btnAudio:hover {
+  background: #4682b4;
+}
+
+
     </style>
   </head>
   <body>
@@ -213,6 +237,7 @@
       <button id="btnStart">▷ Start</button>
       <button id="btnPause">❚❚ Pause</button>
       <button id="btnStop">⊘ Stop</button>
+      <button id="btnAudio" title="Reproducir narración">🔊</button>
     </div>
 
     <!-- 🧱 Escena A-Frame + MindAR -->
@@ -231,6 +256,12 @@
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
         <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
+
+              <!-- 🎧 Audios de narración -->
+        <audio id="audio1" src="./audio1.mp3"></audio>
+        <audio id="audio2" src="./audio2.mp3"></audio>
+        <audio id="audio3" src="./audio3.mp3"></audio>
+        <audio id="audio4" src="./audio4.mp3"></audio>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -329,6 +360,58 @@
   ]
 };
 
+// 🎧 Control de audio por página
+const btnAudio = document.getElementById("btnAudio");
+const audioMap = {
+  0: document.getElementById("audio1"),
+  1: document.getElementById("audio2"),
+  2: document.getElementById("audio3"),
+  3: document.getElementById("audio4")
+};
+
+let currentAudio = null;
+
+// 🔹 Mostrar botón solo cuando hay página activa
+function showAudioButton(show) {
+  btnAudio.style.display = show ? "block" : "none";
+}
+
+// 🔹 Reproducir o pausar audio actual
+btnAudio.addEventListener("click", () => {
+  if (!currentAudio) return;
+
+  if (currentAudio.paused) {
+    currentAudio.play();
+    btnAudio.textContent = "⏸️"; // Cambia icono a pausa
+  } else {
+    currentAudio.pause();
+    btnAudio.textContent = "🔊"; // Vuelve al icono original
+  }
+});
+
+// 🔹 Al detectar una nueva página
+function handlePageAudio(pageIndex) {
+  // Detener el anterior
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
+  currentAudio = audioMap[pageIndex];
+  showAudioButton(true);
+  btnAudio.textContent = "🔊";
+}
+
+// 🔹 Al perder la página
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  showAudioButton(false);
+}
+
+    
 
   let currentPage = null; // qué página está detectada
   let currentFragment = 0; // qué texto dentro de esa página
@@ -369,6 +452,8 @@
     }
   });
 
+    
+
   // 📸 Detección de cada página (target)
   function setupTargetEvents(id, pageIndex) {
     const el = document.querySelector(id);
@@ -376,10 +461,12 @@
       currentPage = pageIndex;
       currentFragment = 0;
       showCurrentFragment();
+      handlePageAudio(pageIndex); // 🔊 activa el audio
     });
     el.addEventListener("targetLost", () => {
       currentPage = null;
       hideAll();
+      stopAudio(); // 🔇 detiene el audio
     });
   }
 
@@ -449,4 +536,5 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
+
 
