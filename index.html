@@ -237,9 +237,6 @@
     <!-- 🎮 Controles del sistema AR -->
 
     <div id="controls">
-      <button id="btnStart">▷ Start</button>
-      <button id="btnPause">❚❚ Pause</button>
-      <button id="btnStop">⊘ Stop</button>
       <button id="btnAudio" title="Reproducir narración">🔊</button>
     </div>
 
@@ -489,17 +486,6 @@ function stopAudio() {
   setupTargetEvents("#target-page4", 3);
 
 
-  // 🎮 Controles del sistema AR
-
-  sceneEl.addEventListener("loaded", () => { arSystem = sceneEl.systems["mindar-image-system"]; });
-  document.querySelector("#btnStart").addEventListener("click", () => arSystem.start());
-  document.querySelector("#btnPause").addEventListener("click", () => arSystem.pause());
-  document.querySelector("#btnStop").addEventListener("click", () => {
-    arSystem.stop();
-    currentPage = null;
-    hideAll();
-  });
-
 
   // 🔄 Imagen del mensaje de escaneo
 
@@ -531,7 +517,8 @@ btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
-  arSystem.start(); 
+   // 🚀 Iniciar MindAR cuando el usuario da clic
+  if (arSystem) arSystem.start();
 });
 
 // Botón "Créditos"
@@ -549,6 +536,7 @@ btnCloseCredits.addEventListener("click", () => {
 
   </body>
 </html>
+
 
 
 
