@@ -326,30 +326,26 @@
 
     
   <script>
-  const storyBox = document.querySelector("#story-box");
-  const menu = document.querySelector("#menu");
-  const scanMessage = document.querySelector("#scan-message");
-  const btnNext = document.querySelector("#btnNext");
-  const btnPrev = document.querySelector("#btnPrev");
+const storyBox = document.querySelector("#story-box");
+const menu = document.querySelector("#menu");
+const scanMessage = document.querySelector("#scan-message");
+const btnNext = document.querySelector("#btnNext");
+const btnPrev = document.querySelector("#btnPrev");
 
-
-  // 📖 Cuento dividido por PÁGINAS y FRAGMENTOS
-
-  const storyPages = {
+// 📖 Cuento dividido por páginas
+const storyPages = {
   0: [
     "Había una vez un ratoncito llamado Mauro,",
     "que vivía en una madriguera cálida bajo un roble viejo.",
     "Le encantaba salir por las noches a buscar semillas…",
     "pero había algo que lo asustaba: ¡La Luna!"
   ],
-
   1: [
     "Grande, blanca y redonda,",
     "lo miraba desde lo alto con un brillo tan intenso que Mauro sentía que lo estaba juzgando.",
     "—Seguro se ríe de mí porque soy pequeño… —",
     "pensaba mientras corría a esconderse entre las hojas."
   ],
-
   2: [
     "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.",
     "—¿Por qué corres así? —preguntó la luciérnaga.",
@@ -358,7 +354,6 @@
     "—¿Y qué tiene de malo que alguien te mire?",
     "Tal vez no te está mirando para juzgarte… sino para acompañarte."
   ],
-
   3: [
     "Mauro se quedó pensando. Esa noche decidió no esconderse.",
     "Se sentó en el pasto y miró hacia el cielo.",
@@ -369,7 +364,7 @@
   ]
 };
 
-// 🎧 Control de audio por página
+// 🎧 Audio por página
 const btnAudio = document.getElementById("btnAudio");
 const audioMap = {
   0: document.getElementById("audio1"),
@@ -380,38 +375,36 @@ const audioMap = {
 
 let currentAudio = null;
 
-// 🔹 Mostrar botón solo cuando hay página activa
+// Mostrar botón de audio
 function showAudioButton(show) {
   btnAudio.style.display = show ? "block" : "none";
 }
 
-// 🔹 Reproducir o pausar audio actual
+// Reproducir / pausar
 btnAudio.addEventListener("click", () => {
   if (!currentAudio) return;
 
   if (currentAudio.paused) {
     currentAudio.play();
-    btnAudio.textContent = "⏸️"; // Cambia icono a pausa
+    btnAudio.textContent = "⏸️";
   } else {
     currentAudio.pause();
-    btnAudio.textContent = "🔊"; // Vuelve al icono original
+    btnAudio.textContent = "🔊";
   }
 });
 
-// 🔹 Al detectar una nueva página
+// Activar audio al detectar página
 function handlePageAudio(pageIndex) {
-  // Detener el anterior
   if (currentAudio) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
-
   currentAudio = audioMap[pageIndex];
   showAudioButton(true);
   btnAudio.textContent = "🔊";
 }
 
-// 🔹 Al perder la página
+// Detener audio
 function stopAudio() {
   if (currentAudio) {
     currentAudio.pause();
@@ -420,122 +413,113 @@ function stopAudio() {
   showAudioButton(false);
 }
 
-    
+// Estado del cuento
+let currentPage = null;
+let currentFragment = 0;
+let arSystem;
+const sceneEl = document.querySelector("a-scene");
 
-  let currentPage = null; // qué página está detectada
-  let currentFragment = 0; // qué texto dentro de esa página
-  let arSystem;
-  const sceneEl = document.querySelector("a-scene");
-
-  function showCurrentFragment() {
-    if (currentPage !== null) {
-      const fragments = storyPages[currentPage];
-      storyBox.innerText = fragments[currentFragment];
-      menu.style.display = "block";
-      scanMessage.style.display = "none";
-    }
-
+function showCurrentFragment() {
+  if (currentPage !== null) {
+    const fragments = storyPages[currentPage];
+    storyBox.innerText = fragments[currentFragment];
+    menu.style.display = "block";
+    scanMessage.style.display = "none";
   }
+}
 
+function hideAll() {
+  menu.style.display = "none";
+  scanMessage.style.display = "block";
+}
 
-  function hideAll() {
-    menu.style.display = "none";
-    scanMessage.style.display = "block";
+// Navegación
+btnNext.addEventListener("click", () => {
+  if (currentPage !== null) {
+    const fragments = storyPages[currentPage];
+    currentFragment = (currentFragment + 1) % fragments.length;
+    showCurrentFragment();
   }
+});
 
+btnPrev.addEventListener("click", () => {
+  if (currentPage !== null) {
+    const fragments = storyPages[currentPage];
+    currentFragment = (currentFragment - 1 + fragments.length) % fragments.length;
+    showCurrentFragment();
+  }
+});
 
-  // 🔹 Avanzar y retroceder dentro de una página
-  btnNext.addEventListener("click", () => {
-    if (currentPage !== null) {
-      const fragments = storyPages[currentPage];
-      currentFragment = (currentFragment + 1) % fragments.length;
-      showCurrentFragment();
-    }
+// Detectar targets
+function setupTargetEvents(id, pageIndex) {
+  const el = document.querySelector(id);
+  el.addEventListener("targetFound", () => {
+    currentPage = pageIndex;
+    currentFragment = 0;
+    showCurrentFragment();
+    handlePageAudio(pageIndex);
   });
-
-  btnPrev.addEventListener("click", () => {
-    if (currentPage !== null) {
-      const fragments = storyPages[currentPage];
-      currentFragment = (currentFragment - 1 + fragments.length) % fragments.length;
-      showCurrentFragment();
-    }
+  el.addEventListener("targetLost", () => {
+    currentPage = null;
+    hideAll();
+    stopAudio();
   });
+}
 
-    
+setupTargetEvents("#target-page1", 0);
+setupTargetEvents("#target-page2", 1);
+setupTargetEvents("#target-page3", 2);
+setupTargetEvents("#target-page4", 3);
 
-  // 📸 Detección de cada página (target)
-  function setupTargetEvents(id, pageIndex) {
-    const el = document.querySelector(id);
-    el.addEventListener("targetFound", () => {
-      currentPage = pageIndex;
-      currentFragment = 0;
-      showCurrentFragment();
-      handlePageAudio(pageIndex); // 🔊 activa el audio
-    });
-    el.addEventListener("targetLost", () => {
-      currentPage = null;
-      hideAll();
-      stopAudio(); // 🔇 detiene el audio
-    });
-  }
+// Inicializar MindAR cuando la escena esté lista
+sceneEl.addEventListener("loaded", () => {
+  arSystem = sceneEl.systems["mindar-image-system"];
+});
 
+// Rotación de imagen de escaneo
+const scanImage = document.querySelector("#scan-image");
+const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
+let scanIndex = 0;
+setInterval(() => {
+  scanIndex = (scanIndex + 1) % scanImages.length;
+  scanImage.src = scanImages[scanIndex];
+}, 2000);
 
-  setupTargetEvents("#target-page1", 0);
-  setupTargetEvents("#target-page2", 1);
-  setupTargetEvents("#target-page3", 2);
-  setupTargetEvents("#target-page4", 3);
-
-
-
-  // 🔄 Imagen del mensaje de escaneo
-
-  const scanImage = document.querySelector("#scan-image");
-  const scanImages = ["./page1.png","./page2.png","./page3.png","./page4.png"];
-  let scanIndex = 0;
-  setInterval(() => {
-    scanIndex = (scanIndex + 1) % scanImages.length;
-    scanImage.src = scanImages[scanIndex];
-  }, 2000);
-
-
-    // 🌟 Interfaz de inicio y créditos
+// ⭐ Pantalla de inicio y créditos
 const startScreen = document.getElementById("start-screen");
 const creditsModal = document.getElementById("credits-modal");
 const btnStartStory = document.getElementById("btnStartStory");
 const btnCredits = document.getElementById("btnCredits");
 const btnCloseCredits = document.getElementById("btnCloseCredits");
 
-// Al iniciar, ocultamos la interfaz AR
-
+// Ocultar controles iniciales
 scanMessage.style.display = "none";
 menu.style.display = "none";
 document.getElementById("controls").style.display = "none";
 
-// Botón "Iniciar cuento"
-
+// ⭐⭐ 🚀 Iniciar cuento + iniciar AR AUTOMÁTICO
 btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
-   // 🚀 Iniciar MindAR cuando el usuario da clic
+
+  // 🚀 INICIAR MINDAR DESPUÉS DEL CLICK
   if (arSystem) arSystem.start();
 });
 
-// Botón "Créditos"
-
+// Créditos
 btnCredits.addEventListener("click", () => {
   creditsModal.style.display = "flex";
 });
-
-// Botón "Cerrar créditos"
 btnCloseCredits.addEventListener("click", () => {
   creditsModal.style.display = "none";
 });
-
 </script>
+
 
   </body>
 </html>
+
 
 
 
