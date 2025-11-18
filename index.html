@@ -255,7 +255,7 @@
         <!-- Modelos 3D (uno por página del cuento) -->
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
-        <a-asset-item id="PageModel3" src="./escena3.glb"></a-asset-item>
+        <a-asset-item id="PageModel3" src="./escena3_1.glb"></a-asset-item>
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
 
               <!-- 🎧 Audios de narración -->
@@ -271,7 +271,8 @@
 
       <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
         <a-entity 
-          gesture-handler="minScale: 0.2; maxScale: 3"
+          gesture-handler="minScale: 0.2; maxScale: 5"
+          pause-animations-on-gesture
           gltf-model="#PageModel1"
           position="0 0 -2"
           rotation="0 0 0"
@@ -284,7 +285,8 @@
 
       <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
         <a-entity 
-           gesture-handler="minScale: 0.2; maxScale: 3"
+           gesture-handler="minScale: 0.2; maxScale: 5"
+          pause-animations-on-gesture
           gltf-model="#PageModel2"
           position="0 0 -2"
           rotation="0 0 0"
@@ -300,7 +302,8 @@
 
       <a-entity id="target-page3" mindar-image-target="targetIndex: 2">
         <a-entity 
-          gesture-handler="minScale: 0.2; maxScale: 3"
+          gesture-handler="minScale: 0.2; maxScale: 5"
+          pause-animations-on-gesture
           gltf-model="#PageModel3"
           position="0 0 -2"
           rotation="0 0 0"
@@ -313,7 +316,8 @@
       <!-- Página 4 -->
       <a-entity id="target-page4" mindar-image-target="targetIndex: 3">
         <a-entity
-          gesture-handler="minScale: 0.2; maxScale: 3"
+          gesture-handler="minScale: 0.2; maxScale: 5"
+          pause-animations-on-gesture
           gltf-model="#PageModel4"
           position="0 0 -2"
           rotation="0 0 0"
@@ -516,9 +520,48 @@ btnCloseCredits.addEventListener("click", () => {
 });
 </script>
 
+   <script>
+AFRAME.registerComponent("pause-animations-on-gesture", {
+  init() {
+    this.isInteracting = false;
+
+    this.el.sceneEl.addEventListener("gesturestart", () => {
+      if (!this.isInteracting) {
+        this.isInteracting = true;
+        this.pauseAnimations();
+      }
+    });
+
+    this.el.sceneEl.addEventListener("gestureend", () => {
+      this.isInteracting = false;
+      this.resumeAnimations();
+    });
+  },
+
+  pauseAnimations() {
+    const comps = this.el.components;
+    for (let key in comps) {
+      if (key.startsWith("animation__")) {
+        comps[key].pause();
+      }
+    }
+  },
+
+  resumeAnimations() {
+    const comps = this.el.components;
+    for (let key in comps) {
+      if (key.startsWith("animation__")) {
+        comps[key].play();
+      }
+    }
+  }
+});
+</script>
+ 
 
   </body>
 </html>
+
 
 
 
