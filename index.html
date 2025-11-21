@@ -187,6 +187,11 @@
 #btnAudio:hover {
   background: #4682b4;
 }
+      
+button.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
 
     </style>
@@ -424,9 +429,11 @@ btnAudio.addEventListener("click", () => {
   if (currentAudio.paused) {
     currentAudio.play();
     btnAudio.textContent = "⏸️";
+     disableNavButtons();
   } else {
     currentAudio.pause();
     btnAudio.textContent = "🔊";
+    enableNavButtons(); 
   }
 });
 
@@ -471,8 +478,6 @@ function hideAll() {
 }
 
     function activateAutoText(pageIndex) {
-   btnNext.style.display = "none";
-  btnPrev.style.display = "none";
   const audio = audioMap[pageIndex];
   const timings = storyTimings[pageIndex];
 
@@ -480,12 +485,34 @@ function hideAll() {
     const t = audio.currentTime;
     for (let i = timings.length - 1; i >= 0; i--) {
       if (t >= timings[i].time) {
+          disableNavButtons();
         storyBox.innerText = timings[i].text;
+        // Rehabilitar botones después de medio segundo
+          setTimeout(() => {
+            if (audio.paused === false) return; // Si sigue el audio, no activar
+            enableNavButtons();
+          }, 400);
+        }
         break;
       }
     }
   };
+   audio.onended = () => {
+    enableNavButtons();
+    btnAudio.textContent = "🔊";
+  }; 
 }
+
+  function disableNavButtons() {
+  btnNext.classList.add("disabled");
+  btnPrev.classList.add("disabled");
+}
+
+function enableNavButtons() {
+  btnNext.classList.remove("disabled");
+  btnPrev.classList.remove("disabled");
+}
+
 
 
 // Navegación
@@ -613,6 +640,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
