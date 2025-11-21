@@ -275,30 +275,31 @@ button.disabled {
       <!-- Página 1 -->
 
       <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
+          <a-entity id="wrapper1" smooth-follow="factor: 12">
         <a-entity 
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel1"
           position="0 0 -2"
-          rotation="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+        </a-entity>
         </a-entity>
       </a-entity>
       <!-- Página 2 -->
 
       <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
+        <a-entity id="wrapper2" smooth-follow="factor: 12">
         <a-entity 
            gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel2"
           position="0 0 -2"
-          rotation="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
-
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+         </a-entity>
         </a-entity>
 
       </a-entity>
@@ -306,32 +307,56 @@ button.disabled {
       <!-- Página 3 -->
 
       <a-entity id="target-page3" mindar-image-target="targetIndex: 2">
+        <a-entity id="wrapper3" smooth-follow="factor: 12">
         <a-entity 
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel3"
           position="0 0 -2"
-          rotation="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+        </a-entity>
         </a-entity>
       </a-entity>
 
       <!-- Página 4 -->
       <a-entity id="target-page4" mindar-image-target="targetIndex: 3">
+        <a-entity id="wrapper4" smooth-follow="factor: 12">
         <a-entity
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel4"
           position="0 0 -2"
-          rotation="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
-          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+        </a-entity>
         </a-entity>
       </a-entity>
     </a-scene>
+
+    <script>
+AFRAME.registerComponent("smooth-follow", {
+  schema: { factor: { default: 12 } }, // entre 8 y 20 funciona muy bien
+
+  init() {
+    this.targetPos = new THREE.Vector3();
+    this.currentPos = new THREE.Vector3();
+  },
+
+  tick() {
+    const world = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(world);
+
+    this.targetPos.copy(world);
+    this.currentPos.lerp(this.targetPos, 1 / this.data.factor);
+
+    this.el.object3D.position.copy(this.currentPos);
+  }
+});
+</script>
+
 
     
   <script>
@@ -637,6 +662,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
