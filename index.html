@@ -274,8 +274,10 @@ button.disabled {
 
       <!-- Página 1 -->
 
-      <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
-          <a-entity id="wrapper1" smooth-follow="factor: 12">
+      <a-entity id="target-page1" mindar-image-target="targetIndex: 0" smooth-follow="factor: 12">
+
+    <!-- CONTENEDOR QUE YA NO TIENE smooth-follow -->
+    <a-entity id="wrapper1">
         <a-entity 
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
@@ -289,8 +291,8 @@ button.disabled {
       </a-entity>
       <!-- Página 2 -->
 
-      <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
-        <a-entity id="wrapper2" smooth-follow="factor: 12">
+      <a-entity id="target-page2" mindar-image-target="targetIndex: 1" smooth-follow="factor: 12">
+  <a-entity id="wrapper2">
         <a-entity 
            gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
@@ -305,9 +307,8 @@ button.disabled {
       </a-entity>
 
       <!-- Página 3 -->
-
-      <a-entity id="target-page3" mindar-image-target="targetIndex: 2">
-        <a-entity id="wrapper3" smooth-follow="factor: 12">
+<a-entity id="target-page3" mindar-image-target="targetIndex: 2" smooth-follow="factor: 12">
+  <a-entity id="wrapper3">
         <a-entity 
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
@@ -321,8 +322,8 @@ button.disabled {
       </a-entity>
 
       <!-- Página 4 -->
-      <a-entity id="target-page4" mindar-image-target="targetIndex: 3">
-        <a-entity id="wrapper4" smooth-follow="factor: 12">
+      <a-entity id="target-page4" mindar-image-target="targetIndex: 3" smooth-follow="factor: 12">
+  <a-entity id="wrapper4">
         <a-entity
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
@@ -662,6 +663,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
