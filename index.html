@@ -253,9 +253,12 @@ button.disabled {
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false">
 
-      <!-- 🌟 Modelo flotante que aparece centrado en cámara -->
+     
+
+      <a-assets>
+         <!-- 🌟 Modelo flotante que aparece centrado en cámara -->
 <a-entity id="floatingModel"
           position="0 0 -2"
           scale="0.3 0.3 0.3"
@@ -263,8 +266,7 @@ button.disabled {
           animation__fadein="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 300; easing: easeOutQuad"
           animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
 </a-entity>
-
-      <a-assets>
+        
         <!-- Modelos 3D (uno por página del cuento) -->
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
@@ -617,6 +619,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
