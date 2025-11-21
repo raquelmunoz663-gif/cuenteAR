@@ -471,6 +471,8 @@ function hideAll() {
 }
 
     function activateAutoText(pageIndex) {
+   btnNext.style.display = "none";
+  btnPrev.style.display = "none";
   const audio = audioMap[pageIndex];
   const timings = storyTimings[pageIndex];
 
@@ -611,13 +613,6 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
-
-
-
-
-
-
-
 
 
 
