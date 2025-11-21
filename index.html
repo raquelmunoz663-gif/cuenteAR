@@ -337,7 +337,39 @@ const btnNext = document.querySelector("#btnNext");
 const btnPrev = document.querySelector("#btnPrev");
 
 // 📖 Cuento dividido por páginas
+
 const storyPages = {
+  0: [
+    "Había una vez un ratoncito llamado Mauro,",
+    "que vivía en una madriguera cálida bajo un roble viejo.",
+    "Le encantaba salir por las noches a buscar semillas…",
+    "pero había algo que lo asustaba: ¡La Luna!"
+  ],
+  1: [
+    "Grande, blanca y redonda,",
+    "lo miraba desde lo alto con un brillo tan intenso que Mauro sentía que lo estaba juzgando.",
+    "—Seguro se ríe de mí porque soy pequeño… —",
+    "pensaba mientras corría a esconderse entre las hojas."
+  ],
+  2: [
+    "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.",
+    "—¿Por qué corres así? —preguntó la luciérnaga.",
+    "—La Luna me mira —susurró Milo temblando.",
+    "La luciérnaga soltó una risita luminosa.",
+    "—¿Y qué tiene de malo que alguien te mire?",
+    "Tal vez no te está mirando para juzgarte… sino para acompañarte."
+  ],
+  3: [
+    "Mauro se quedó pensando. Esa noche decidió no esconderse.",
+    "Se sentó en el pasto y miró hacia el cielo.",
+    "La Luna, muy despacio, brilló aún más fuerte… como si le sonriera.",
+    "Y Mauro, por primera vez, le sonrió también.",
+    "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:",
+    "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
+  ]
+};
+
+const storyTimings = {
   0: [
     {time: 0, text: "Había una vez un ratoncito llamado Mauro,"},
     {time: 3, text: "que vivía en una madriguera cálida bajo un roble viejo."},
@@ -579,6 +611,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
