@@ -280,12 +280,21 @@ button.disabled {
           animation__fadein="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 300; easing: easeOutQuad"
           animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
 </a-entity>
+<a-entity id="target-page1" mindar-image-target="targetIndex: 0">
+  <a-entity></a-entity>
+</a-entity>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      <a-entity id="target-page1" mindar-image-target="targetIndex: 0"></a-entity>
-    <a-entity id="target-page2" mindar-image-target="targetIndex: 1"></a-entity>
-    <a-entity id="target-page3" mindar-image-target="targetIndex: 2"></a-entity>
-    <a-entity id="target-page4" mindar-image-target="targetIndex: 3"></a-entity>
+<a-entity id="target-page2" mindar-image-target="targetIndex: 1">
+  <a-entity></a-entity>
+</a-entity>
+
+<a-entity id="target-page3" mindar-image-target="targetIndex: 2">
+  <a-entity></a-entity>
+</a-entity>
+
+<a-entity id="target-page4" mindar-image-target="targetIndex: 3">
+  <a-entity></a-entity>
+</a-entity>
 
       
     </a-scene>
@@ -620,19 +629,3 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
