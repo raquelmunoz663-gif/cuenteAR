@@ -569,15 +569,16 @@ scanMessage.style.display = "none";
 menu.style.display = "none";
 document.getElementById("controls").style.display = "none";
 
-// ⭐⭐ 🚀 Iniciar cuento + iniciar AR AUTOMÁTICO
 btnStartStory.addEventListener("click", () => {
   startScreen.style.display = "none";
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
 
-  // 🚀 INICIAR MINDAR DESPUÉS DEL CLICK
-  if (arSystem) arSystem.start();
+  sceneEl.addEventListener("arReady", () => {
+    sceneEl.systems["mindar-image-system"].start();
+  });
 });
+
 
 // Créditos
 btnCredits.addEventListener("click", () => {
@@ -629,3 +630,4 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
