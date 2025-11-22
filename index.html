@@ -284,6 +284,8 @@ button.disabled {
   <a-entity></a-entity>
 </a-entity>
 
+  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
 <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
   <a-entity></a-entity>
 </a-entity>
@@ -574,10 +576,17 @@ btnStartStory.addEventListener("click", () => {
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
 
-  sceneEl.addEventListener("arReady", () => {
-    sceneEl.systems["mindar-image-system"].start();
-  });
+  // iniciar MindAR DESPUÉS del clic, cuando la escena ya cargó
+  if (arSystem) {
+    arSystem.start();
+  } else {
+    sceneEl.addEventListener("loaded", () => {
+      sceneEl.systems["mindar-image-system"].start();
+    });
+  }
 });
+
+
 
 
 // Créditos
@@ -630,4 +639,5 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
