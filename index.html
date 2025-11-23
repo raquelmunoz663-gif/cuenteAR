@@ -272,19 +272,19 @@ button.disabled {
         <audio id="audio4" src="./audio4.mp3"></audio>
       </a-assets>
 
-      <!-- 🌟 Modelo flotante que aparece centrado en cámara -->
-<a-entity id="floatingModel"
-          position="0 0 0"
-          scale="0.3 0.3 0.3"
-          visible="false"
-          animation__fadein="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 300; easing: easeOutQuad"
-          animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
+<a-entity mindar-image-anchor>
+  <a-entity id="floatingModel"
+            position="0 0 -1" 
+            scale="0.3 0.3 0.3"
+            visible="false"
+            animation__fadein="property: scale; from: 0 0 0; to: 0.3 0.3 0.3; dur: 300;"
+            animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true;">
+  </a-entity>
 </a-entity>
+
 <a-entity id="target-page1" mindar-image-target="targetIndex: 0">
   <a-entity></a-entity>
 </a-entity>
-
-  <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
 <a-entity id="target-page2" mindar-image-target="targetIndex: 1">
   <a-entity></a-entity>
@@ -298,6 +298,7 @@ button.disabled {
   <a-entity></a-entity>
 </a-entity>
 
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
       
     </a-scene>
 
@@ -639,6 +640,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
