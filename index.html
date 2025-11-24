@@ -282,10 +282,9 @@ button.disabled {
 
       <!-- Modelo libre para modo 3D (inicia oculto) -->
 <a-entity id="freeModel" visible="false"
-          position="0 0 -2"
+          position="0 0 0"
           scale="0.3 0.3 0.3"
           gesture-handler="minScale: 0.2; maxScale: 5"
-          animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
 </a-entity>
 
@@ -302,7 +301,7 @@ button.disabled {
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel1"
-          position="0 0 -2"
+          position="0 0 0"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
@@ -316,7 +315,7 @@ button.disabled {
            gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel2"
-          position="0 0 -2"
+          position="0 0 0"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
          </a-entity>
@@ -331,7 +330,7 @@ button.disabled {
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel3"
-          position="0 0 -2"
+          position="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -346,7 +345,7 @@ button.disabled {
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel4"
-          position="0 0 -2"
+          position="0 0 0"
           scale="0.3 0.3 0.3"
            animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -723,5 +722,6 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
