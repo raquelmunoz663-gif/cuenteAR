@@ -84,6 +84,42 @@
       }
       #controls button:hover { background: #666; }
 
+      /* ✨ Botones de cambio de modo (3D / AR) */
+#mode-switch {
+  position: fixed;
+  top: 20px;                   /* ⬅️ AHORA VA ARRIBA CERCA DEL SCAN MESSAGE */
+  right: 20px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#mode-switch button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6dd5fa, #2980b9);
+  color: white;
+  font-weight: bold;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+#mode-switch button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+#mode-switch button:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+
 
           /* 🌙 Pantalla de inicio */
 #start-screen {
@@ -246,13 +282,11 @@ button.disabled {
     </div>
     
 
-    <div id="mode-switch" style="
-  position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
-  z-index: 1500; display: none; gap: 10px;
-">
+    <div id="mode-switch">
   <button id="enter3d">Modo 3D</button>
   <button id="enterAR" style="display:none;">Regresar a AR</button>
 </div>
+
 
 
     <!-- 🧱 Escena A-Frame + MindAR -->
@@ -626,9 +660,47 @@ btnStartStory.addEventListener("click", () => {
   scanMessage.style.display = "block";
   document.getElementById("controls").style.display = "flex";
 
+  modeSwitch.style.display = "flex"; // ahora sí aparece
+
+
   // 🚀 INICIAR MINDAR DESPUÉS DEL CLICK
   if (arSystem) arSystem.start();
 });
+
+    
+    function fixMaterialsBrightness() {
+  const scene = document.querySelector("a-scene").object3D;
+
+  scene.traverse((node) => {
+    if (node.isMesh && node.material) {
+      const mat = node.material;
+
+      // 🔥 Ajuste que arregla el brillo exagerado
+      if (mat.envMapIntensity !== undefined) mat.envMapIntensity = 0.6;
+      if (mat.emissiveIntensity !== undefined) mat.emissiveIntensity = 1.0;
+
+      mat.needsUpdate = true;
+    }
+  });
+}
+
+
+    function disableARInput() {
+  const canvas = document.querySelector("a-scene").canvas;
+  if (canvas) {
+    canvas.style.pointerEvents = "none";
+  }
+}
+
+    function enableARInput() {
+  const canvas = document.querySelector("a-scene").canvas;
+  if (canvas) {
+    canvas.style.pointerEvents = "auto";
+  }
+}
+
+
+
 
 // Créditos
 btnCredits.addEventListener("click", () => {
@@ -648,6 +720,7 @@ modeSwitch.style.display = "flex";
 // ➤ Activar modo 3D
 btn3D.addEventListener("click", () => {
   if (arSystem) arSystem.stop();
+  disableARInput();  
 
   // Ocultar targets AR
   document.querySelectorAll("[mindar-image-target]").forEach(t => {
@@ -673,11 +746,19 @@ btnAR.addEventListener("click", () => {
     t.setAttribute("visible", "true");
   });
 
-  if (arSystem) arSystem.start();
+  if (arSystem) {
+    arSystem.start();
+
+    setTimeout(() => {
+      fixMaterialsBrightness();
+      enableARInput();
+    }, 300);
+  }
 
   btnAR.style.display = "none";
   btn3D.style.display = "inline-block";
 });
+
 
 </script>
 
@@ -722,6 +803,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
