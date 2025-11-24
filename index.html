@@ -244,6 +244,16 @@ button.disabled {
     <div id="controls">
       <button id="btnAudio" title="Reproducir narración">🔊</button>
     </div>
+    
+
+    <div id="mode-switch" style="
+  position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+  z-index: 1500; display: none; gap: 10px;
+">
+  <button id="enter3d">Modo 3D</button>
+  <button id="enterAR" style="display:none;">Regresar a AR</button>
+</div>
+
 
     <!-- 🧱 Escena A-Frame + MindAR -->
 
@@ -270,6 +280,16 @@ button.disabled {
         <audio id="audio4" src="./audio4.mp3"></audio>
       </a-assets>
 
+      <!-- Modelo libre para modo 3D (inicia oculto) -->
+<a-entity id="freeModel" visible="false"
+          position="0 0 -2"
+          scale="0.3 0.3 0.3"
+          gesture-handler="minScale: 0.2; maxScale: 5"
+          animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+</a-entity>
+
+
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <!-- Página 1 -->
@@ -284,7 +304,6 @@ button.disabled {
           gltf-model="#PageModel1"
           position="0 0 -2"
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
         </a-entity>
@@ -299,7 +318,6 @@ button.disabled {
           gltf-model="#PageModel2"
           position="0 0 -2"
           scale="0.3 0.3 0.3"
-           animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
          </a-entity>
         </a-entity>
@@ -620,6 +638,48 @@ btnCredits.addEventListener("click", () => {
 btnCloseCredits.addEventListener("click", () => {
   creditsModal.style.display = "none";
 });
+
+    const freeModel = document.getElementById("freeModel");
+const btn3D = document.getElementById("enter3d");
+const btnAR = document.getElementById("enterAR");
+const modeSwitch = document.getElementById("mode-switch");
+
+modeSwitch.style.display = "flex";
+
+// ➤ Activar modo 3D
+btn3D.addEventListener("click", () => {
+  if (arSystem) arSystem.stop();
+
+  // Ocultar targets AR
+  document.querySelectorAll("[mindar-image-target]").forEach(t => {
+    t.setAttribute("visible", "false");
+  });
+
+  // Mostrar modelo 3D libre con GLB correspondiente
+  if (currentPage !== null) {
+    freeModel.setAttribute("gltf-model", `#PageModel${currentPage + 1}`);
+    freeModel.setAttribute("visible", "true");
+  }
+
+  btn3D.style.display = "none";
+  btnAR.style.display = "inline-block";
+});
+
+// ➤ Regresar a modo AR
+btnAR.addEventListener("click", () => {
+  freeModel.setAttribute("visible", "false");
+
+  // Mostrar targets AR
+  document.querySelectorAll("[mindar-image-target]").forEach(t => {
+    t.setAttribute("visible", "true");
+  });
+
+  if (arSystem) arSystem.start();
+
+  btnAR.style.display = "none";
+  btn3D.style.display = "inline-block";
+});
+
 </script>
 
    <script>
@@ -663,4 +723,5 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
