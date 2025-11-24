@@ -318,8 +318,7 @@ button.disabled {
 <a-entity id="freeModel" visible="false"
           position="0 0 0"
           scale="0.3 0.3 0.3"
-          gesture-handler="minScale: 0.2; maxScale: 5"
-          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+           orbit-controls="target: 0 0 0; enablePan: false; enableDamping: true; dampingFactor: 0.1; rotateSpeed:0.5; minDistance:0.5; maxDistance:5;">
 </a-entity>
 
 
@@ -803,3 +802,4 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
