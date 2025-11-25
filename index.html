@@ -4,7 +4,7 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-gesture-detector@1.0.0/dist/aframe-gesture-detector.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
       body { margin: 0; overflow: hidden; }
@@ -345,6 +345,13 @@ button.disabled {
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+      <a-entity id="orbitCam" 
+          camera="active: false"
+          orbit-controls 
+          position="0 1.2 3">
+</a-entity>
+
+
       <!-- Página 1 -->
 
       <a-entity id="target-page1" mindar-image-target="targetIndex: 0" smooth-follow="factor: 12">
@@ -419,7 +426,7 @@ button.disabled {
           gltf-model="#PageModel5"
           nightify
           position="0 0 0"
-          scale="0.15 0.15 0.15"
+          scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
         </a-entity>
@@ -756,6 +763,31 @@ btnStartStory.addEventListener("click", () => {
   }
 }
 
+    <script>
+AFRAME.registerComponent("orbit-controls", {
+  init() {
+    const threeScene = this.el.sceneEl;
+    const camera = this.el.getObject3D("camera");
+
+    // Crear controles
+    this.controls = new THREE.OrbitControls(camera, threeScene.renderer.domElement);
+
+    // Ajustes visuales
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.08;
+    this.controls.enablePan = false;
+    this.controls.minDistance = 1.5;
+    this.controls.maxDistance = 6;
+    this.controls.target.set(0, 1, 0);
+  },
+
+  tick() {
+    if (!this.controls) return;
+    this.controls.update();
+  }
+});
+</script>
+
 
 
 
@@ -776,19 +808,21 @@ modeSwitch.style.display = "flex";
 
 // ➤ Activar modo 3D
 btn3D.addEventListener("click", () => {
-  if (arSystem) arSystem.stop();
-  disableARInput();  
 
-  // Ocultar targets AR
+  pauseAllSpins();   // ⬅️ DETENER GIRO AUTOMÁTICO
+
+  if (arSystem) arSystem.stop();
+  disableARInput();
+
+  document.querySelector("a-camera").setAttribute("camera", "active:false");
+  document.querySelector("#orbitCam").setAttribute("camera", "active:true");
+
+  sceneEl.renderer.setClearColor("#ffffff", 1);
+
   document.querySelectorAll("[mindar-image-target]").forEach(t => {
     t.setAttribute("visible", "false");
   });
 
-  // Cambiar fondo a blanco para modo 3D
-  const renderer = sceneEl.renderer;
-  renderer.setClearColor("#ffffff", 1);
-
-  // Mostrar modelo 3D libre con GLB correspondiente
   if (currentPage !== null) {
     freeModel.setAttribute("gltf-model", `#PageModel${currentPage + 1}`);
     freeModel.setAttribute("visible", "true");
@@ -798,24 +832,25 @@ btn3D.addEventListener("click", () => {
   btnAR.style.display = "inline-block";
 });
 
+    
 // ➤ Regresar a modo AR
 btnAR.addEventListener("click", () => {
+
+  resumeAllSpins();   // ⬅️ ACTIVAR DE NUEVO EL GIRO
+
   freeModel.setAttribute("visible", "false");
 
-   // Restaurar fondo transparente
-  const renderer = sceneEl.renderer;
-  renderer.setClearColor("#000000", 0);
+  document.querySelector("#orbitCam").setAttribute("camera", "active:false");
+  document.querySelector("a-camera").setAttribute("camera", "active:true");
 
-  // Mostrar targets AR
+  sceneEl.renderer.setClearColor("#000000", 0);
+
   document.querySelectorAll("[mindar-image-target]").forEach(t => {
     t.setAttribute("visible", "true");
   });
 
-  // Quitar fondo nocturno en AR
-   forceHideAllModels();
   if (arSystem) {
     arSystem.start();
-
     setTimeout(() => {
       fixMaterialsBrightness();
       enableARInput();
@@ -825,6 +860,7 @@ btnAR.addEventListener("click", () => {
   btnAR.style.display = "none";
   btn3D.style.display = "inline-block";
 });
+
 
 
 </script>
@@ -905,6 +941,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
