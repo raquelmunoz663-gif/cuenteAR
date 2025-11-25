@@ -818,14 +818,23 @@ AFRAME.registerComponent("nightify", {
       this.el.object3D.traverse((node) => {
         if (node.isMesh && node.material) {
           const mat = node.material;
-          if (mat.color) mat.color.multiplyScalar(0.3); // oscurecer
-          if (mat.emissive) mat.emissive.setHex(0x334466); // brillo azul lunar
+
+          // No oscurezco demasiado la textura
+          if (mat.color) mat.color.multiplyScalar(0.9); 
+
+          // Emissive muy sutil como luz de luna
+          if (mat.emissive) {
+            mat.emissive.setRGB(0.05, 0.1, 0.2); // tono azul suave
+            mat.emissiveIntensity = 0.15;
+          }
+
           mat.needsUpdate = true;
         }
       });
     });
   }
 });
+
 </script>
 
 
@@ -870,6 +879,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
