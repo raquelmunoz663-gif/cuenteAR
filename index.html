@@ -763,31 +763,18 @@ btnStartStory.addEventListener("click", () => {
   }
 }
 
-    <script>
-AFRAME.registerComponent("orbit-controls", {
-  init() {
-    const threeScene = this.el.sceneEl;
-    const camera = this.el.getObject3D("camera");
+    function pauseAllSpins() {
+  document.querySelectorAll("[animation__spin]").forEach(el => {
+    el.components["animation__spin"].pause();
+  });
+}
 
-    // Crear controles
-    this.controls = new THREE.OrbitControls(camera, threeScene.renderer.domElement);
 
-    // Ajustes visuales
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.08;
-    this.controls.enablePan = false;
-    this.controls.minDistance = 1.5;
-    this.controls.maxDistance = 6;
-    this.controls.target.set(0, 1, 0);
-  },
-
-  tick() {
-    if (!this.controls) return;
-    this.controls.update();
-  }
-});
-</script>
-
+    function resumeAllSpins() {
+  document.querySelectorAll("[animation__spin]").forEach(el => {
+    el.components["animation__spin"].play();
+  });
+}
 
 
 
@@ -899,6 +886,30 @@ AFRAME.registerComponent("nightify", {
 
 </script>
 
+      <script>
+AFRAME.registerComponent("orbit-controls", {
+  init() {
+    const threeScene = this.el.sceneEl;
+    const camera = this.el.getObject3D("camera");
+
+    // Crear controles
+    this.controls = new THREE.OrbitControls(camera, threeScene.renderer.domElement);
+
+    // Ajustes visuales
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.08;
+    this.controls.enablePan = false;
+    this.controls.minDistance = 1.5;
+    this.controls.maxDistance = 6;
+    this.controls.target.set(0, 1, 0);
+  },
+
+  tick() {
+    if (!this.controls) return;
+    this.controls.update();
+  }
+});
+</script>
 
    <script>
 AFRAME.registerComponent("pause-animations-on-gesture", {
@@ -941,6 +952,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
