@@ -398,8 +398,8 @@ button.disabled {
       </a-entity>
 
 
-        <!-- Página 3 -->
-<a-entity id="target-page3" mindar-image-target="targetIndex: 2" smooth-follow="factor: 12">
+        <!-- Página 5-->
+<a-entity id="target-page5" mindar-image-target="targetIndex: 4" smooth-follow="factor: 12">
   <a-entity id="wrapper5">
         <a-entity 
           gesture-handler="minScale: 0.2; maxScale: 5"
@@ -462,7 +462,7 @@ const storyPages = {
   2: [
     "Una noche, mientras huía apresurado, tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra.",
     "—¿Por qué corres así? —preguntó la luciérnaga.",
-    "—La Luna me mira —susurró Milo temblando.",
+    "—La Luna me mira —susurró Mauro temblando.",
     "La luciérnaga soltó una risita luminosa.",
     "—¿Y qué tiene de malo que alguien te mire?",
     "Tal vez no te está mirando para juzgarte… sino para acompañarte."
@@ -475,6 +475,10 @@ const storyPages = {
     "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:",
     "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
   ]
+
+   4: [
+    "Mauro y la Luna"
+    ]
 };
 
 const storyTimings = {
@@ -494,7 +498,7 @@ const storyTimings = {
     {time: 0, text: "Una noche, mientras huía apresurado"},
     {time: 2, text: "tropezó con una luciérnaga que brillaba tranquilamente sobre una piedra."},
     {time: 7, text: "—¿Por qué corres así? —preguntó la luciérnaga."},
-    {time: 10, text: "—La Luna me mira —susurró Milo temblando."},
+    {time: 10, text: "—La Luna me mira —susurró Mauro temblando."},
     {time: 13, text: "La luciérnaga soltó una risita luminosa."},
     {time: 16, text: "—¿Y qué tiene de malo que alguien te mire?"},
     {time: 19, text: "Tal vez no te está mirando para juzgarte… sino para acompañarte."}
@@ -507,6 +511,10 @@ const storyTimings = {
     {time: 16, text: "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:"},
     {time: 23, text: "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."}
   ]
+
+  4: [
+    "Mauro y la Luna"
+    ]
 };
 
 // 🎧 Audio por página
@@ -774,8 +782,6 @@ btnAR.addEventListener("click", () => {
   });
 
   // Quitar fondo nocturno en AR
-  const sky = document.querySelector("a-sky");
-  if (sky) sky.parentNode.removeChild(sky);
 
   if (arSystem) {
     arSystem.start();
@@ -853,6 +859,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
