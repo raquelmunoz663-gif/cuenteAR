@@ -313,6 +313,7 @@ button.disabled {
         <audio id="audio2" src="./audio2.mp3"></audio>
         <audio id="audio3" src="./audio3.mp3"></audio>
         <audio id="audio4" src="./audio4.mp3"></audio>
+        <audio id="audio5" src="./audio5.mp3"></audio>
       </a-assets>
 
 
@@ -474,10 +475,11 @@ const storyPages = {
     "Y Mauro, por primera vez, le sonrió también.",
     "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:",
     "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."
-  ]
+  ],
 
    4: [
-    "Mauro y la Luna"
+    "Mauro y la Luna",
+     "cuento con AR"
     ]
 };
 
@@ -510,10 +512,11 @@ const storyTimings = {
     {time: 12, text: "Y Mauro, por primera vez, le sonrió también."},
     {time: 16, text: "Desde entonces, el pequeño ratón siguió sintiendo miedo a veces, pero había aprendido algo importante:"},
     {time: 23, text: "La valentía no es no tener miedo… es atreverse a mirar al miedo a los ojos y sonreírle de vuelta."}
-  ]
+  ],
 
   4: [
-    "Mauro y la Luna"
+    "Mauro y la Luna",
+    "Cuento con AR"
     ]
 };
 
@@ -523,7 +526,8 @@ const audioMap = {
   0: document.getElementById("audio1"),
   1: document.getElementById("audio2"),
   2: document.getElementById("audio3"),
-  3: document.getElementById("audio4")
+  3: document.getElementById("audio4"),
+  4: document.getElementById("audio4")
 };
 
 let currentAudio = null;
@@ -859,6 +863,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
