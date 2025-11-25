@@ -205,8 +205,8 @@
   /* 🔊 Botón de audio */
 #btnAudio {
   position: fixed;
-  top: 20px;
-  right: -20px;
+  top: -100px;
+  right: 50px;
   z-index: 1500;
   background: rgba(30, 144, 255, 0.9);
   color: white;
@@ -784,6 +784,10 @@ btn3D.addEventListener("click", () => {
     t.setAttribute("visible", "false");
   });
 
+  // Cambiar fondo a blanco para modo 3D
+  const renderer = sceneEl.renderer;
+  renderer.setClearColor("#ffffff", 1);
+
   // Mostrar modelo 3D libre con GLB correspondiente
   if (currentPage !== null) {
     freeModel.setAttribute("gltf-model", `#PageModel${currentPage + 1}`);
@@ -797,6 +801,10 @@ btn3D.addEventListener("click", () => {
 // ➤ Regresar a modo AR
 btnAR.addEventListener("click", () => {
   freeModel.setAttribute("visible", "false");
+
+   // Restaurar fondo transparente
+  const renderer = sceneEl.renderer;
+  renderer.setClearColor("#000000", 0);
 
   // Mostrar targets AR
   document.querySelectorAll("[mindar-image-target]").forEach(t => {
@@ -897,6 +905,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
