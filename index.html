@@ -318,8 +318,8 @@ button.disabled {
 
 
   <!-- 💡 Luces de noche -->
-  <a-entity light="type: ambient; color: #223344; intensity: 0.1"></a-entity>
-  <a-entity light="type: directional; color: #aabbee; intensity: 0.1; position: 2 5 2"></a-entity>
+  <a-entity light="type: ambient; color: #223344; intensity: 0.9"></a-entity>
+  <a-entity light="type: directional; color: #aabbee; intensity: 0.9; position: 2 5 2"></a-entity>
 
 
       <!-- Modelo libre para modo 3D (inicia oculto) -->
@@ -377,7 +377,7 @@ button.disabled {
           gltf-model="#PageModel3"
           nightify
           position="0 0 0"
-          scale="0.3 0.3 0.3"
+          scale="0.15 0.15 0.15"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
         </a-entity>
@@ -392,7 +392,7 @@ button.disabled {
           gltf-model="#PageModel4"
           nightify
           position="0 0 0"
-          scale="0.3 0.3 0.3"
+          scale="0.15 0.15 0.15"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
         </a-entity>
@@ -408,7 +408,7 @@ button.disabled {
           gltf-model="#PageModel5"
           nightify
           position="0 0 0"
-          scale="0.3 0.3 0.3"
+          scale="0.15 0.15 0.15"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
         </a-entity>
@@ -625,6 +625,11 @@ function enableNavButtons() {
   btnPrev.classList.remove("disabled");
 }
 
+function forceHideAllModels() {
+  document.querySelectorAll("[mindar-image-target]").forEach(t => {
+    t.object3D.visible = false;
+  });
+}
 
 
 // Navegación
@@ -650,12 +655,14 @@ function setupTargetEvents(id, pageIndex) {
   el.addEventListener("targetFound", () => {
     currentPage = pageIndex;
     currentFragment = 0;
+    el.object3D.visible = true;
     showCurrentFragment();
     handlePageAudio(pageIndex);
     activateAutoText(pageIndex);
   });
   el.addEventListener("targetLost", () => {
     currentPage = null;
+    el.object3D.visible = false;
     hideAll();
     stopAudio();
   });
@@ -786,7 +793,7 @@ btnAR.addEventListener("click", () => {
   });
 
   // Quitar fondo nocturno en AR
-
+   forceHideAllModels();
   if (arSystem) {
     arSystem.start();
 
@@ -863,6 +870,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
