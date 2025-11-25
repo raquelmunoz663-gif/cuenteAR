@@ -293,7 +293,7 @@ button.disabled {
 
     <a-scene
       gesture-detector
-      mindar-image="imageTargetSrc: ./cuento1.mind; maxTrack: 1"
+      mindar-image="imageTargetSrc: ./cuento2.mind; maxTrack: 1"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
@@ -304,8 +304,9 @@ button.disabled {
         <!-- Modelos 3D (uno por página del cuento) -->
         <a-asset-item id="PageModel1" src="./escena1.glb"></a-asset-item>
         <a-asset-item id="PageModel2" src="./escena2.glb"></a-asset-item>
-        <a-asset-item id="PageModel3" src="./escena3_2.glb"></a-asset-item>
+        <a-asset-item id="PageModel3" src="./escena3_3.glb"></a-asset-item>
         <a-asset-item id="PageModel4" src="./escena4.glb"></a-asset-item>
+        <a-asset-item id="PageModel5" src="./page5.glb"></a-asset-item>
 
               <!-- 🎧 Audios de narración -->
         <audio id="audio1" src="./audio1.mp3"></audio>
@@ -316,8 +317,8 @@ button.disabled {
 
 
   <!-- 💡 Luces de noche -->
-  <a-entity light="type: ambient; color: #223344; intensity: 0.4"></a-entity>
-  <a-entity light="type: directional; color: #aabbee; intensity: 0.3; position: 2 5 2"></a-entity>
+  <a-entity light="type: ambient; color: #223344; intensity: 0.1"></a-entity>
+  <a-entity light="type: directional; color: #aabbee; intensity: 0.1; position: 2 5 2"></a-entity>
 
 
       <!-- Modelo libre para modo 3D (inicia oculto) -->
@@ -388,6 +389,22 @@ button.disabled {
           gesture-handler="minScale: 0.2; maxScale: 5"
           pause-animations-on-gesture
           gltf-model="#PageModel4"
+          nightify
+          position="0 0 0"
+          scale="0.3 0.3 0.3"
+          animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
+        </a-entity>
+        </a-entity>
+      </a-entity>
+
+
+        <!-- Página 3 -->
+<a-entity id="target-page3" mindar-image-target="targetIndex: 2" smooth-follow="factor: 12">
+  <a-entity id="wrapper5">
+        <a-entity 
+          gesture-handler="minScale: 0.2; maxScale: 5"
+          pause-animations-on-gesture
+          gltf-model="#PageModel5"
           nightify
           position="0 0 0"
           scale="0.3 0.3 0.3"
@@ -636,6 +653,7 @@ setupTargetEvents("#target-page1", 0);
 setupTargetEvents("#target-page2", 1);
 setupTargetEvents("#target-page3", 2);
 setupTargetEvents("#target-page4", 3);
+setupTargetEvents("#target-page5", 4);
 
 // Inicializar MindAR cuando la escena esté lista
 sceneEl.addEventListener("loaded", () => {
@@ -742,14 +760,6 @@ btn3D.addEventListener("click", () => {
     freeModel.setAttribute("visible", "true");
   }
 
-  // Fondo nocturno solo en 3D
-  let sky = document.querySelector("a-sky");
-  if (!sky) {
-    sky = document.createElement("a-sky");
-    sky.setAttribute("color", "#000022");
-    document.querySelector("a-scene").appendChild(sky);
-  }
-
   btn3D.style.display = "none";
   btnAR.style.display = "inline-block";
 });
@@ -843,6 +853,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
