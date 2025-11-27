@@ -317,21 +317,22 @@ button.disabled {
       </a-assets>
 
 
-  <!-- 🌙 Luz ambiental azulada suave -->
-<a-entity light="type: ambient; color: #9eb6ff; intensity: 0.45"></a-entity>
+  <!-- 🌤 Luz general más neutra -->
+<a-entity light="type: ambient; color: #ffffff; intensity: 0.25"></a-entity>
 
-<!-- ✨ Luz de luna direccional, muy suave -->
-<a-entity light="type: directional; 
-                 color: #d9e6ff; 
-                 intensity: 0.9; 
+<!-- 🌙 Luz de luna (ligeramente azul pero natural) -->
+<a-entity light="type: directional;
+                 color: #cfd9ff;
+                 intensity: 0.55;
                  position="-2 4 3"
                  cast-shadow="true"></a-entity>
 
-<!-- 🌟 Luz mágica tenue para dar profundidad -->
-<a-entity light="type: point; 
-                 color: #88aaff; 
-                 intensity: 0.4; 
+<!-- ✨ Luz mágica tenue, MUY suave -->
+<a-entity light="type: point;
+                 color: #aac6ff;
+                 intensity: 0.15;
                  position="0 1.5 1.2"></a-entity>
+
 
       <!-- Modelo libre para modo 3D (inicia oculto) -->
 <a-entity id="freeModel" visible="false"
@@ -838,20 +839,20 @@ AFRAME.registerComponent("nightify", {
         if (node.isMesh && node.material) {
           const mat = node.material;
 
-          // ⭐ 1. Mantener la textura casi intacta
+          // Color normal, sin tintes azules
           if (mat.color) {
-            mat.color.multiplyScalar(1.05); // leve realce
+            mat.color.multiplyScalar(1.0);
           }
 
-          // 🌙 2. Emissive suave estilo “luz de luna”
+          // Emissive MUY suave
           if (mat.emissive) {
-            mat.emissive.setRGB(0.15, 0.2, 0.35);  // azul lavanda
-            mat.emissiveIntensity = 0.35;         // brillo mágico
+            mat.emissive.setRGB(0.05, 0.07, 0.12);  // casi neutro
+            mat.emissiveIntensity = 0.2;
           }
 
-          // ✨ 3. Un pequeño rimlight (como borde mágico)
+          // Reflejo más bajo
           if (mat.envMapIntensity !== undefined) {
-            mat.envMapIntensity = 0.7;            // brillo reflejado
+            mat.envMapIntensity = 0.45;
           }
 
           mat.needsUpdate = true;
@@ -860,6 +861,7 @@ AFRAME.registerComponent("nightify", {
     });
   }
 });
+
 
 </script>
 
@@ -905,5 +907,6 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
