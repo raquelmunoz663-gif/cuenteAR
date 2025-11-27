@@ -205,7 +205,7 @@
   /* 🔊 Botón de audio */
 #btnAudio {
   position: fixed;
-  top: -80px;
+  top: -60px;
   right: 50px;
   z-index: 1500;
   background: rgba(30, 144, 255, 0.9);
@@ -340,7 +340,8 @@ button.disabled {
           scale="0.3 0.3 0.3"
           gesture-handler="minScale: 0.2; maxScale: 5"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear"
-          nightify>
+          nightify
+          attach-moon-light="moonName: Luna">
 </a-entity>
 
 
@@ -357,6 +358,7 @@ button.disabled {
           pause-animations-on-gesture
           gltf-model="#PageModel1"
           nightify
+          attach-moon-light="moonName: Luna"
           position="0 0 0"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -372,6 +374,7 @@ button.disabled {
           pause-animations-on-gesture
           gltf-model="#PageModel2"
           nightify
+          attach-moon-light="moonName: Luna"
           position="0 0 0"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -388,6 +391,7 @@ button.disabled {
           pause-animations-on-gesture
           gltf-model="#PageModel3"
           nightify
+          attach-moon-light="moonName: Luna"
           position="0 0 0"
           scale="0.15 0.15 0.15"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -403,6 +407,7 @@ button.disabled {
           pause-animations-on-gesture
           gltf-model="#PageModel4"
           nightify
+          attach-moon-light="moonName: Luna"
           position="0 0 0"
           scale="0.15 0.15 0.15"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -419,6 +424,7 @@ button.disabled {
           pause-animations-on-gesture
           gltf-model="#PageModel5"
           nightify
+          attach-moon-light="moonName: Luna"
           position="0 0 0"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
@@ -828,6 +834,51 @@ btnAR.addEventListener("click", () => {
 });
 
 
+AFRAME.registerComponent("attach-moon-light", {
+  schema: {
+    moonName: { default: "Luna" } // Cambia si tu luna tiene otro nombre
+  },
+
+  init() {
+    this.el.addEventListener("model-loaded", () => {
+      const root = this.el.getObject3D("mesh");
+
+      if (!root) return;
+
+      let moonMesh = null;
+
+      // Buscar la luna dentro del GLB
+      root.traverse(node => {
+        if (node.isMesh && node.name.includes(this.data.moonName)) {
+          moonMesh = node;
+        }
+      });
+
+      if (!moonMesh) {
+        console.warn("❗ No se encontró la luna dentro del modelo");
+        return;
+      }
+
+      // 🎯 Crear luz SPOT que siga a la luna
+      const moonLight = new THREE.SpotLight(0xffffff, 1.4, 5, Math.PI / 4, 0.3);
+      moonLight.castShadow = false;
+
+      // Posicionar la luz justo SOBRE la luna
+      moonMesh.add(moonLight);
+      moonLight.position.set(0, 0.15, 0.15);
+
+      // 👉 Si quieres que la luna brille sola (glow)
+      moonMesh.material.emissive = new THREE.Color(0xffffff);
+      moonMesh.material.emissiveIntensity = 1.2;
+      moonMesh.material.needsUpdate = true;
+
+      console.log("🌕 Luz colocada sobre la luna:", moonMesh.name);
+    });
+  }
+});
+
+
+
 </script>
 
 <!-- Script para dar efecto nocturno -->
@@ -907,6 +958,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
