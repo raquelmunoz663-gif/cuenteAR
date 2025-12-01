@@ -39,7 +39,7 @@
       }
 
       #menu button:hover { background: #4682b4; }
-      #story-box { margin-top: 10px; font-size: 15px; line-height: 1.4; }
+      #story-box { margin-top: 10px; font-size: 20px; line-height: 1.5; }
 
       /* 🧭 Mensaje de escaneo */
       #scan-message {
@@ -425,7 +425,7 @@ button.disabled {
           gltf-model="#PageModel5"
           nightify
           attach-moon-light="moonName: Luna"
-          position="0 0 0"
+          position="0 0 -0.3"
           scale="0.3 0.3 0.3"
           animation__spin="property: rotation; to: 0 360 0; dur:8500; loop:true; easing:linear">
         </a-entity>
@@ -576,10 +576,23 @@ function handlePageAudio(pageIndex) {
     currentAudio.pause();
     currentAudio.currentTime = 0;
   }
+
   currentAudio = audioMap[pageIndex];
+
   showAudioButton(true);
-  btnAudio.textContent = "🔊";
+
+  // 🔥 Reproducir automáticamente al detectar target
+  currentAudio.play()
+    .then(() => {
+      btnAudio.textContent = "⏸️";  // Cambia el icono del botón
+      disableNavButtons();          // Deshabilita navegación durante el audio
+    })
+    .catch(e => {
+      console.log("⚠️ Autoplay bloqueado por el navegador. Esperando interacción…");
+      btnAudio.textContent = "🔊";  // Mostrar botón para iniciar manual
+    });
 }
+    
 
 // Detener audio
 function stopAudio() {
@@ -964,6 +977,7 @@ AFRAME.registerComponent("pause-animations-on-gesture", {
 
   </body>
 </html>
+
 
 
 
